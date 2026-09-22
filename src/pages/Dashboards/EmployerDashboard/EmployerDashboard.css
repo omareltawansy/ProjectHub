@@ -1,0 +1,356 @@
+.employer-dashboard {
+  min-height: calc(100vh - 60px);
+  background: var(--background);
+}
+
+.employer-dashboard .dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.ed-internships-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ed-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.ed-see-all,
+.employer-dashboard .sd-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 150ms ease;
+}
+
+.ed-see-all:hover,
+.employer-dashboard .sd-see-all:hover {
+  color: var(--text-on-surface);
+  background: none;
+}
+
+/* ── Internship preview grid ── */
+.ed-internships-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.ed-internship-card {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ed-intern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.ed-intern-company {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.ed-intern-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.ed-intern-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ed-skill-tag {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-on-surface);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.ed-intern-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.ed-intern-deadline {
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.ed-intern-applicants {
+  color: var(--text-secondary);
+}
+
+.ed-intern-btn {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  align-self: flex-start;
+}
+
+.ed-intern-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Status badges */
+.ed-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ed-badge-open     { background: var(--success-light); color: var(--success); border-color: rgba(76, 175, 130, 0.4); }
+.ed-badge-closed   { background: var(--warning-light); color: var(--warning); border-color: rgba(224, 168, 84, 0.4); }
+.ed-badge-archived { background: rgba(255,255,255,0.08); color: var(--text-secondary); border-color: var(--border); }
+
+/* Empty state */
+.ed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.ed-empty-btn {
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.ed-empty-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 900px) {
+  .ed-internships-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ed-internships-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Welcome banner ── */
+.ed-welcome {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ed-welcome-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.ed-welcome-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.ed-manage-btn {
+  background: var(--surface-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.ed-manage-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Stats row ── */
+.ed-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ed-stat {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+.ed-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.ed-stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  line-height: 1;
+}
+
+.ed-stat-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ── Notifications section ── */
+.ed-notif-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+
+.ed-notif-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ed-notif-badge {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(224, 168, 84, 0.4);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.ed-notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ed-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ed-notif-item:last-child { border-bottom: none; }
+
+.ed-notif-item.read { opacity: 0.65; }
+
+.ed-notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  background: var(--text-secondary);
+}
+
+.ed-notif-dot-general  { background: var(--text-secondary); }
+.ed-notif-dot-employer { background: var(--primary-light); }
+.ed-notif-dot-flag     { background: var(--error); }
+.ed-notif-dot-appeal   { background: var(--warning); }
+.ed-notif-dot-ci_link  { background: var(--success); }
+
+.ed-notif-body { flex: 1; }
+
+.ed-notif-message {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  line-height: 1.45;
+  margin: 0 0 3px;
+}
+
+.ed-notif-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ed-empty-text {
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .ed-stats { grid-template-columns: repeat(2, 1fr); }
+}

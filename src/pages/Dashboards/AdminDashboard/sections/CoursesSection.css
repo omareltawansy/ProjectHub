@@ -1,0 +1,618 @@
+.cs-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ===== Card ===== */
+.cs-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.cs-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  letter-spacing: -0.01em;
+}
+
+.cs-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(224, 168, 84, 0.4);
+}
+
+/* ===== Create Form ===== */
+.cs-form-row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cs-input {
+  flex: 1;
+  min-width: 180px;
+  height: 38px;
+  padding: 0 var(--spacing-md);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface-input);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.cs-input-code {
+  max-width: 200px;
+  flex: 0 1 200px;
+  text-transform: uppercase;
+}
+
+.cs-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.cs-input::placeholder {
+  color: var(--text);
+  text-transform: none;
+}
+
+.cs-create-btn {
+  height: 38px;
+  padding: 0 var(--spacing-lg);
+  background: var(--surface-elevated);
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease;
+}
+
+.cs-create-btn:hover {
+  background: var(--text-secondary);
+}
+
+.cs-form-error {
+  margin-top: var(--spacing-sm);
+  font-size: 13px;
+  color: #fca5a5;
+}
+
+.cs-edit-error {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+/* ===== Table ===== */
+.cs-table-wrapper {
+  overflow-x: auto;
+}
+
+.cs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.cs-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.cs-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-on-surface);
+  vertical-align: middle;
+}
+
+.cs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cs-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cs-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-xl) !important;
+}
+
+.cs-course-name {
+  font-weight: 500;
+}
+
+.cs-instructors {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.cs-none {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.cs-date {
+  color: var(--text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.cs-resolved {
+  color: var(--text-secondary);
+}
+
+/* ===== Course Code Badge ===== */
+.cs-code-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+}
+
+/* ===== Type Badges ===== */
+.cs-type-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.cs-type-link {
+  background: rgba(168, 213, 188, 0.18);
+  color: var(--info);
+  border-color: rgba(168, 213, 188, 0.4);
+}
+
+.cs-type-unlink {
+  background: var(--warning-light);
+  color: var(--warning);
+  border-color: rgba(224, 168, 84, 0.4);
+}
+
+/* ===== Status Badges ===== */
+.cs-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.cs-status-pending {
+  background: var(--warning-light);
+  color: var(--warning);
+  border-color: rgba(224, 168, 84, 0.4);
+}
+
+.cs-status-accepted {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(76, 175, 130, 0.4);
+}
+
+.cs-status-rejected {
+  background: var(--error-light);
+  color: var(--error);
+  border-color: rgba(224, 92, 92, 0.4);
+}
+
+/* ===== Action Buttons ===== */
+.cs-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cs-btn-edit,
+.cs-btn-delete,
+.cs-btn-accept,
+.cs-btn-reject,
+.cs-btn-save,
+.cs-btn-cancel {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.cs-btn-edit {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cs-btn-edit:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cs-btn-delete,
+.cs-btn-reject {
+  border: 1px solid rgba(224, 92, 92, 0.6);
+  background: transparent;
+  color: #fca5a5;
+}
+
+.cs-btn-delete:hover,
+.cs-btn-reject:hover {
+  background: rgba(224, 92, 92, 0.18);
+  color: #fecaca;
+}
+
+.cs-btn-accept {
+  border: 1px solid rgba(76, 175, 130, 0.6);
+  background: transparent;
+  color: var(--success);
+}
+
+.cs-btn-accept:hover {
+  background: rgba(76, 175, 130, 0.18);
+}
+
+.cs-btn-save {
+  border: none;
+  background: var(--surface-elevated);
+  color: var(--text);
+}
+
+.cs-btn-save:hover {
+  background: var(--text-secondary);
+}
+
+.cs-btn-cancel {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cs-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+/* ===== Inline Edit Inputs ===== */
+.cs-inline-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--spacing-sm);
+  border: 1px solid var(--primary-light);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-input);
+  outline: none;
+}
+
+.cs-inline-input-code {
+  max-width: 140px;
+  text-transform: uppercase;
+}
+
+.cs-inline-input:focus {
+  box-shadow: 0 0 0 2px rgba(168, 213, 188, 0.35);
+}
+
+/* ── Course list head + search + tabs ── */
+.cs-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.cs-card-head .cs-card-title { margin-bottom: 0; }
+
+.cs-search {
+  position: relative;
+  flex: 0 1 320px;
+  min-width: 220px;
+}
+
+.cs-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(26, 61, 46, 0.5);
+  pointer-events: none;
+}
+
+.cs-search input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.cs-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.cs-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.cs-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.cs-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+.cs-tab.active {
+  background: var(--surface-elevated);
+  color: var(--text);
+  border-color: var(--surface-elevated);
+  font-weight: 600;
+}
+
+.cs-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+}
+
+.cs-tab-count.active {
+  background: rgba(26, 61, 46, 0.12);
+  color: var(--text);
+}
+
+/* ── Course detail / manage instructors panel ── */
+.cs-row-expanded td {
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: none;
+}
+
+.cs-detail-row td {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0 !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.cs-detail-panel {
+  padding: var(--spacing-lg);
+  border-top: 2px solid var(--info);
+}
+
+.cs-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--spacing-xl);
+}
+
+@media (max-width: 800px) {
+  .cs-detail-grid { grid-template-columns: 1fr; }
+}
+
+.cs-detail-heading {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.cs-detail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cs-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.cs-field-label {
+  min-width: 130px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.cs-field-value {
+  color: var(--text-on-surface);
+}
+
+.cs-no-docs {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.cs-instructor-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cs-instructor-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-on-surface);
+}
+
+.cs-instructor-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid rgba(224, 92, 92, 0.5);
+  color: #fca5a5;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.cs-instructor-remove:hover {
+  background: rgba(224, 92, 92, 0.18);
+}
+
+.cs-add-instructor-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cs-add-instructor-row .cs-inline-input {
+  flex: 1;
+  height: 36px;
+  border: 1px solid var(--border-light);
+}
+
+.cs-btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text);
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.cs-btn-link:hover:not(:disabled) {
+  background: var(--text-secondary);
+}
+
+.cs-btn-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Detail toggle button */
+.cs-btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.cs-btn-detail:hover,
+.cs-btn-detail.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Create course button enhancement */
+.cs-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

@@ -1,0 +1,726 @@
+.ps-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.ps-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.ps-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  letter-spacing: -0.01em;
+}
+
+.ps-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(224, 168, 84, 0.4);
+}
+
+/* Tabs */
+.ps-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+.ps-tab {
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  border-radius: 0;
+  transition: color 150ms ease, border-color 150ms ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ps-tab:hover {
+  color: var(--text-on-surface);
+}
+
+.ps-tab.active {
+  color: var(--text-on-surface);
+  border-bottom-color: var(--surface-elevated);
+  font-weight: 600;
+}
+
+.ps-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warning-light);
+  color: var(--warning);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  min-width: 18px;
+}
+
+/* Table */
+.ps-table-wrapper {
+  overflow-x: auto;
+}
+
+.ps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ps-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.ps-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-on-surface);
+  vertical-align: middle;
+}
+
+.ps-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ps-table tbody tr:not(.ps-flag-row):not(.ps-appeal-row):hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ps-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-xl) !important;
+}
+
+.ps-project-title {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ps-student-name {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ps-student-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ps-course,
+.ps-date {
+  color: var(--text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.ps-flag-reason {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 220px;
+}
+
+.ps-no-appeal {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Status badges */
+.ps-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.ps-status-active {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(76, 175, 130, 0.4);
+}
+
+.ps-status-inactive {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.ps-status-flagged {
+  background: var(--warning-light);
+  color: var(--warning);
+  border-color: rgba(224, 168, 84, 0.4);
+}
+
+/* Action buttons */
+.ps-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ps-btn-toggle,
+.ps-btn-flag,
+.ps-btn-view-appeal {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.ps-btn-activate {
+  background: transparent;
+  color: var(--success);
+  border: 1px solid rgba(76, 175, 130, 0.6);
+}
+
+.ps-btn-activate:hover {
+  background: rgba(76, 175, 130, 0.18);
+}
+
+.ps-btn-deactivate {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.ps-btn-deactivate:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ps-btn-flag {
+  border: 1px solid rgba(224, 168, 84, 0.6);
+  background: transparent;
+  color: var(--warning);
+}
+
+.ps-btn-flag:hover {
+  background: var(--warning-light);
+}
+
+.ps-btn-view-appeal {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ps-btn-view-appeal:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+/* Inline flag form row */
+.ps-flag-row td {
+  background: rgba(224, 168, 84, 0.08);
+  border-bottom: 1px solid rgba(224, 168, 84, 0.4);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.ps-flag-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.ps-flag-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.ps-flag-label em {
+  font-style: normal;
+  color: var(--warning);
+}
+
+.ps-flag-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.ps-flag-input {
+  flex: 1;
+  min-width: 240px;
+  height: 34px;
+  padding: 0 var(--spacing-md);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-input);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.ps-flag-input:focus {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 2px rgba(224, 168, 84, 0.18);
+}
+
+.ps-flag-input.ps-flag-input-error {
+  border-color: var(--error);
+}
+
+.ps-btn-confirm,
+.ps-btn-cancel {
+  padding: 6px 14px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  white-space: nowrap;
+}
+
+.ps-btn-confirm {
+  border: none;
+  background: var(--warning);
+  color: #1a3d2e;
+}
+
+.ps-btn-confirm:hover {
+  background: #f0bd6c;
+}
+
+.ps-btn-cancel {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ps-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+.ps-flag-error {
+  font-size: 12px;
+  color: #fca5a5;
+  margin: 0;
+}
+
+/* Inline appeal panel row */
+.ps-appeal-row td {
+  background: rgba(76, 175, 130, 0.1);
+  border-bottom: 1px solid rgba(76, 175, 130, 0.4);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.ps-appeal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.ps-appeal-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.ps-appeal-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid rgba(224, 168, 84, 0.4);
+}
+
+.ps-appeal-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ps-appeal-message {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Card head + sub ── */
+.ps-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.ps-card-head .ps-card-title { margin-bottom: 0; }
+
+.ps-card-sub {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Toolbar (search + filters) ── */
+.ps-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ps-search {
+  position: relative;
+  flex: 1 1 280px;
+  min-width: 220px;
+}
+
+.ps-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(26, 61, 46, 0.5);
+  pointer-events: none;
+}
+
+.ps-search input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ps-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.ps-select {
+  height: 38px;
+  padding: 0 32px 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ps-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+/* ── Tab counts ── */
+.ps-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  min-width: 20px;
+  margin-left: 6px;
+}
+
+.ps-tab.active .ps-tab-count,
+.ps-tab-count.active {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+/* ── Status flagged badge with icon ── */
+.ps-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ── Detail panel ── */
+.ps-btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.ps-btn-detail:hover,
+.ps-btn-detail.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ps-btn-view-appeal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ps-btn-view-appeal.active {
+  background: rgba(76, 175, 130, 0.15);
+  color: var(--success);
+  border-color: rgba(76, 175, 130, 0.4);
+}
+
+.ps-detail-row td {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0 !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.ps-detail-panel {
+  padding: var(--spacing-lg);
+  border-top: 2px solid var(--info);
+}
+
+.ps-detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+@media (max-width: 800px) {
+  .ps-detail-grid { grid-template-columns: 1fr; }
+}
+
+.ps-detail-heading {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.ps-detail-fields {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ps-detail-fields li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.ps-detail-label {
+  min-width: 120px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.ps-detail-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-on-surface);
+}
+
+.ps-detail-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ps-skill {
+  background: rgba(168, 213, 188, 0.18);
+  color: var(--info);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  border: 1px solid rgba(168, 213, 188, 0.4);
+  font-weight: 500;
+}
+
+.ps-detail-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ps-detail-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--info);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.ps-detail-links a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-on-surface);
+}
+
+.ps-no-links {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ── Unflag button ── */
+.ps-btn-unflag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(76, 175, 130, 0.6);
+  background: transparent;
+  color: var(--success);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  white-space: nowrap;
+}
+
+.ps-btn-unflag:hover {
+  background: rgba(76, 175, 130, 0.18);
+}
+
+/* ── Appeal action row ── */
+.ps-appeal-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.ps-btn-appeal-accept,
+.ps-btn-appeal-reject {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.ps-btn-appeal-accept {
+  background: var(--success);
+  color: #fff;
+  border: 1px solid var(--success);
+}
+
+.ps-btn-appeal-accept:hover {
+  background: #3d9c70;
+  border-color: #3d9c70;
+}
+
+.ps-btn-appeal-reject {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.ps-btn-appeal-reject:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Flag button stays gold */
+.ps-btn-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}

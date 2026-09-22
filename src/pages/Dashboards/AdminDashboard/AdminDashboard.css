@@ -1,0 +1,5 @@
+/* Admin-specific wrapper — layout managed by global ad-shell classes */
+.admin-dashboard {
+  min-height: calc(100vh - 60px);
+  background: var(--background);
+}

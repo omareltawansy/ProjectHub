@@ -1,0 +1,363 @@
+/* ── EmployerPublicProfile ───────────────────────────────────────── */
+.epro-root {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.epro-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* Header */
+.epro-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.epro-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: color 150ms, background 150ms;
+}
+.epro-back-btn:hover { color: var(--text-on-surface); background: rgba(255,255,255,0.07); }
+
+.epro-header-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.epro-company-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.epro-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--info) 0%, #4a9eff 100%);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.epro-company-name {
+  margin: 0 0 4px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.epro-company-sub {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.epro-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.epro-status-approved { background: rgba(76,207,130,0.18); color: #4ccf82; border: 1px solid rgba(76,207,130,0.3); }
+.epro-status-pending  { background: rgba(255,185,56,0.18);  color: #ffb938; border: 1px solid rgba(255,185,56,0.3); }
+.epro-status-rejected { background: rgba(235,87,87,0.18);   color: #eb5757; border: 1px solid rgba(235,87,87,0.3); }
+
+.epro-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms, color 150ms;
+}
+.epro-edit-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-on-surface); }
+
+/* Stats row */
+.epro-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.epro-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+}
+
+.epro-stat-val {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-on-surface);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.epro-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Grid layout */
+.epro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.epro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+}
+
+.epro-card-wide {
+  grid-column: 1 / -1;
+}
+
+.epro-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.epro-card-header h2 {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.01em;
+}
+
+.epro-bio {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.epro-empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Contact */
+.epro-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.epro-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.epro-contact-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.epro-link {
+  color: var(--info);
+  text-decoration: none;
+  font-size: 13px;
+}
+.epro-link:hover { text-decoration: underline; }
+
+/* Maps */
+.epro-maps-link {
+  font-size: 12px;
+  color: var(--info);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.epro-maps-link:hover { text-decoration: underline; }
+
+/* Internships list */
+.epro-intern-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.epro-intern-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  gap: 12px;
+}
+
+.epro-intern-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+  margin-bottom: 3px;
+}
+
+.epro-intern-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.epro-intern-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.epro-intern-open,
+.epro-intern-currently-hiring { background: rgba(76,207,130,0.18); color: #4ccf82; }
+.epro-intern-closed,
+.epro-intern-position-filled  { background: rgba(235,87,87,0.18);  color: #eb5757; }
+.epro-intern-pending           { background: rgba(255,185,56,0.18); color: #ffb938; }
+.epro-intern-archived          { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+
+/* Student stats */
+.epro-students-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.epro-student-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.epro-student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.epro-student-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.epro-student-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.epro-student-status {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.epro-app-hired      { background: rgba(76,207,130,0.18);  color: #4ccf82; }
+.epro-app-pending    { background: rgba(255,185,56,0.18);  color: #ffb938; }
+.epro-app-reviewing  { background: rgba(100,160,255,0.18); color: #64a0ff; }
+.epro-app-rejected   { background: rgba(235,87,87,0.18);   color: #eb5757; }
+
+/* Edit modal */
+.epro-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.epro-modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+  .epro-grid { grid-template-columns: 1fr; }
+  .epro-stats-row { grid-template-columns: 1fr; }
+  .epro-header-content { flex-direction: column; }
+  .epro-company-row { flex-direction: column; align-items: flex-start; }
+}

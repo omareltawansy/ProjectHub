@@ -1,0 +1,333 @@
+.pfs-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.pfs-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+/* ── Card header ── */
+.pfs-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.pfs-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.pfs-card-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Toolbar ── */
+.pfs-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.pfs-search {
+  position: relative;
+  flex: 1 1 280px;
+  min-width: 220px;
+}
+
+.pfs-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.pfs-search input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.pfs-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.pfs-select {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.pfs-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+/* ── Table ── */
+.pfs-table-wrapper {
+  overflow-x: auto;
+}
+
+.pfs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.pfs-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.pfs-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-on-surface);
+  vertical-align: middle;
+}
+
+.pfs-table tbody tr:not(.pfs-detail-row):hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pfs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pfs-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-xl) !important;
+}
+
+/* ── Student cell ── */
+.pfs-student-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pfs-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(168, 213, 188, 0.2);
+  border: 1px solid rgba(168, 213, 188, 0.4);
+  color: var(--info);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.pfs-name {
+  font-weight: 500;
+  color: var(--text-on-surface);
+  white-space: nowrap;
+}
+
+.pfs-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.pfs-major {
+  color: var(--text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.pfs-count {
+  font-weight: 600;
+  color: var(--text-on-surface);
+  text-align: center;
+}
+
+/* ── Skills pills ── */
+.pfs-skills-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pfs-skill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(168, 213, 188, 0.12);
+  color: var(--info);
+  border: 1px solid rgba(168, 213, 188, 0.3);
+  white-space: nowrap;
+}
+
+.pfs-skill-more {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.pfs-skill-detail {
+  font-size: 12px;
+  padding: 4px 11px;
+}
+
+/* ── View/Hide button ── */
+.pfs-btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.pfs-btn-detail:hover,
+.pfs-btn-detail.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Detail panel ── */
+.pfs-detail-row td {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0 !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.pfs-detail-panel {
+  padding: var(--spacing-lg);
+  border-top: 2px solid var(--info);
+}
+
+.pfs-detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+@media (max-width: 700px) {
+  .pfs-detail-grid { grid-template-columns: 1fr; }
+}
+
+.pfs-detail-heading {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.pfs-bio {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+
+.pfs-detail-fields {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pfs-detail-fields li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.pfs-field-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.pfs-field-value {
+  color: var(--text-on-surface);
+}
+
+.pfs-field-link {
+  color: var(--info);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.pfs-field-link:hover {
+  color: var(--text-on-surface);
+  text-decoration: underline;
+}
+
+.pfs-skills-full {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ── Footer count ── */
+.pfs-footer {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+}

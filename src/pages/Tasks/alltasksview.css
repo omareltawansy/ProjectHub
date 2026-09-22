@@ -1,0 +1,302 @@
+.atv-page-wrap {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.atv-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 24px 48px;
+}
+
+.atv-page-wrap > .atv-page {
+  padding-top: 80px;
+}
+
+/* When rendered inline inside dashboard (no nav) */
+.atv-page:first-child {
+  padding-top: 0;
+}
+
+/* Inline mode — fills the dashboard container */
+.atv-page.inline {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.atv-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.atv-back-btn {
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.atv-back-btn:hover {
+  background: rgba(26, 61, 46, 0.06);
+}
+
+.atv-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.atv-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Stats */
+.atv-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.atv-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.atv-stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.atv-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.atv-stat.overdue .atv-stat-value { color: var(--error); }
+.atv-stat.done .atv-stat-value { color: var(--success); }
+
+/* Filters */
+.atv-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.atv-filter-btn {
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.atv-filter-btn:hover {
+  color: var(--text);
+  border-color: rgba(26, 61, 46, 0.25);
+  background: rgba(26, 61, 46, 0.05);
+}
+
+.atv-filter-btn.active {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border-color: var(--surface);
+}
+
+/* Groups */
+.atv-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.atv-group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.atv-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+}
+
+.atv-group-icon {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.atv-group-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.atv-group-course {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.08);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.atv-group-link {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s;
+}
+
+.atv-group-link:hover {
+  color: var(--text-on-surface);
+}
+
+/* Inline mode (no page wrap needed) */
+.atv-page-wrap.inline {
+  background: transparent;
+}
+
+/* Task rows */
+.atv-tasks {
+  padding: 0 18px;
+}
+
+.atv-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.atv-task-row:last-child {
+  border-bottom: none;
+}
+
+.atv-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+}
+
+.atv-check.done {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.atv-task-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.atv-task-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.atv-task-row.completed .atv-task-title {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.atv-task-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.atv-task-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.atv-task-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.atv-overdue {
+  color: var(--error) !important;
+  font-weight: 500;
+}
+
+.atv-overdue-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--error);
+  padding: 1px 6px;
+  border-radius: 20px;
+  margin-left: 6px;
+  font-size: 10px;
+}
+
+.atv-status-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.atv-status-badge.completed { background: var(--success-light); color: var(--success); }
+.atv-status-badge.overdue { background: rgba(220,38,38,0.15); color: var(--error); }
+.atv-status-badge.pending { background: var(--warning-light); color: var(--warning); }
+.atv-status-badge.postponed { background: rgba(139,92,246,0.15); color: #a78bfa; }
+
+.atv-empty {
+  text-align: center;
+  padding: 48px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}

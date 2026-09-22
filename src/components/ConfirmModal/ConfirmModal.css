@@ -1,0 +1,147 @@
+.cm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15, 77, 58, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.cm-modal {
+  width: min(440px, 100%);
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+.cm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cm-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cm-icon-danger {
+  background: var(--error-light);
+  color: var(--error);
+}
+
+.cm-icon-primary,
+.cm-icon-warning {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.cm-icon-success {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.cm-title {
+  flex: 1;
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.cm-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.cm-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+}
+
+.cm-message {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.cm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cm-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.cm-btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.cm-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cm-btn-confirm.cm-btn-danger {
+  background: var(--error);
+  color: #fff;
+}
+
+.cm-btn-confirm.cm-btn-danger:hover {
+  background: #d04545;
+}
+
+.cm-btn-confirm.cm-btn-primary,
+.cm-btn-confirm.cm-btn-success {
+  background: #fff;
+  color: var(--text);
+}
+
+.cm-btn-confirm.cm-btn-primary:hover,
+.cm-btn-confirm.cm-btn-success:hover {
+  background: var(--text-secondary);
+}
+
+.cm-btn-confirm.cm-btn-warning {
+  background: var(--warning);
+  color: var(--text);
+}
+
+.cm-btn-confirm.cm-btn-warning:hover {
+  background: #d99a47;
+}

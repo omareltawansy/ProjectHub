@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"handleApply\\\\|handleRemove\\\\|ApplyButton\\\\|RemoveApplication\")",
+      "Bash(npx react-scripts *)",
+      "Bash(python3 -c ' *)",
+      "Bash(pip install *)",
+      "Bash(pip3 install *)",
+      "Bash(node -e \"const lr = require\\('lucide-react'\\); console.log\\('Github' in lr, 'FlagOff' in lr, 'Video' in lr, 'FileText' in lr\\);\")"
+    ]
+  }
+}

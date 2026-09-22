@@ -1,0 +1,145 @@
+.ams-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.ams-head {
+  margin-bottom: 12px;
+}
+
+.ams-title {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+}
+
+.ams-body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 12px;
+  min-height: 520px;
+}
+
+.ams-conversations {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ams-conversation {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-on-surface);
+  padding: 10px 12px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.ams-conversation:last-child {
+  border-bottom: none;
+}
+
+.ams-conversation.active,
+.ams-conversation:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ams-conv-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ams-conv-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ams-chat {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ams-messages {
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ams-msg-wrap {
+  align-self: flex-start;
+  max-width: 72%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ams-msg-wrap.mine {
+  align-self: flex-end;
+}
+
+.ams-msg {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  padding: 9px 11px;
+  border-radius: 12px;
+}
+
+.ams-msg.mine {
+  background: var(--primary-light);
+}
+
+.ams-msg-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ams-input-row {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding: 10px;
+}
+
+.ams-input-row input {
+  flex: 1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--surface-input);
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+.ams-input-row button {
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text);
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.ams-empty {
+  margin: auto;
+  color: var(--text-secondary);
+}

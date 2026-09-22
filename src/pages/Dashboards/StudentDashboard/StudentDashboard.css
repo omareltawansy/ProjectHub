@@ -1,0 +1,553 @@
+.student-dashboard {
+  min-height: calc(100vh - 60px);
+  background: var(--background);
+}
+
+.sd-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.sd-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Welcome */
+.sd-welcome {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sd-welcome-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.sd-welcome-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.sd-gpa {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-on-surface);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+/* Stats */
+.sd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sd-stat {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+.sd-stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.sd-stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  line-height: 1;
+}
+
+.sd-stat-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* Cards */
+.sd-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+
+.sd-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sd-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.sd-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 150ms ease;
+}
+
+.sd-see-all:hover {
+  color: var(--text-on-surface);
+}
+
+/* Grid layouts */
+.sd-grid-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sd-grid-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+/* Project rows */
+.sd-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sd-row:last-of-type {
+  border-bottom: none;
+}
+
+.sd-row-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-on-surface);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sd-row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.sd-row-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Badges */
+.sd-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.sd-badge.public { background: var(--success-light); color: var(--success); border-color: rgba(76, 175, 130, 0.4); }
+.sd-badge.private { background: rgba(168, 213, 188, 0.18); color: var(--info); border-color: rgba(168, 213, 188, 0.4); }
+.sd-badge.accepted { background: var(--success-light); color: var(--success); border-color: rgba(76, 175, 130, 0.4); }
+.sd-badge.pending { background: var(--warning-light); color: var(--warning); border-color: rgba(224, 168, 84, 0.4); }
+
+/* Add button */
+.sd-add-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.sd-add-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--text-on-surface);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Tasks */
+.sd-task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sd-task-row:last-child {
+  border-bottom: none;
+}
+
+.sd-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sd-check.done {
+  background: var(--success);
+  border-color: var(--success);
+  color: #ffffff;
+}
+
+.sd-task-name {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  flex: 1;
+}
+
+.sd-task-name.done {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.sd-task-due {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.sd-task-due.late {
+  color: var(--error);
+  font-weight: 500;
+}
+
+/* Notifications */
+.sd-notif-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sd-notif-row:last-of-type {
+  border-bottom: none;
+}
+
+.sd-notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--warning);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.sd-notif-dot.read {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sd-notif-text {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  line-height: 1.45;
+}
+
+.sd-notif-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* Collaborators */
+.sd-collab-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sd-collab-row:last-child {
+  border-bottom: none;
+}
+
+.sd-collab-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--text-on-surface);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sd-collab-name {
+  font-size: 13px;
+  color: var(--text-on-surface);
+  flex: 1;
+}
+
+/* Invitations */
+.sd-inv-row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sd-inv-row:last-child {
+  border-bottom: none;
+}
+
+.sd-inv-project {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.sd-inv-from {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0 10px;
+}
+
+.sd-inv-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.sd-btn-accept {
+  background: var(--success-light);
+  color: var(--success);
+  border: 1px solid rgba(76, 175, 130, 0.4);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.sd-btn-accept:hover {
+  background: rgba(76, 175, 130, 0.22);
+}
+
+.sd-btn-decline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.sd-btn-decline:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--text-on-surface);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Internships section */
+.sd-internships-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  margin-top: 24px;
+  padding: 0 4px;
+}
+
+.sd-internships-header .sd-card-title {
+  color: var(--text);
+}
+
+.sd-internships-header .sd-see-all {
+  color: var(--text-muted);
+}
+
+.sd-internships-header .sd-see-all:hover {
+  color: var(--text);
+}
+
+.sd-internships-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sd-internship-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sd-intern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.sd-intern-company {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.sd-intern-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-surface);
+}
+
+.sd-intern-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.sd-skill-tag {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-on-surface);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.sd-intern-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.sd-intern-deadline {
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.sd-intern-info {
+  color: var(--text-secondary);
+}
+
+.sd-intern-btn {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  align-self: flex-start;
+}
+
+.sd-intern-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sd-intern-btn-view {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.sd-intern-btn-view:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sd-badge.intern-open { background: var(--success-light); color: var(--success); border-color: rgba(76, 175, 130, 0.4); }
+.sd-badge.intern-applied { background: var(--warning-light); color: var(--warning); border-color: rgba(224, 168, 84, 0.4); }
+.sd-badge.intern-interview { background: rgba(168, 213, 188, 0.18); color: var(--info); border-color: rgba(168, 213, 188, 0.4); }
+
+.sd-portfolio-btn {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.sd-portfolio-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 700px) {
+  .sd-stats { grid-template-columns: repeat(2, 1fr); }
+  .sd-grid-top { grid-template-columns: 1fr; }
+  .sd-grid-bottom { grid-template-columns: 1fr; }
+  .sd-internships-grid { grid-template-columns: 1fr; }
+}

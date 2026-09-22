@@ -1,0 +1,496 @@
+/* Dark Mode — deeper teal variant of the ProjectHub palette */
+:root.dark-mode {
+  --primary: #2a8a6a;          /* lighter teal pops on dark */
+  --primary-dark: #1a6b52;
+  --primary-light: #3ba37f;
+
+  --background: #0d2c22;       /* very dark teal page background */
+  --surface: #133a2b;          /* dark teal cards */
+  --surface-light: #1e5142;    /* hover/active on cards */
+  --surface-input: #0a221a;    /* nearly-black inputs */
+  --surface-elevated: #1e5142;
+
+  --border: rgba(255, 255, 255, 0.10);
+  --border-light: rgba(168, 213, 188, 0.18);
+
+  --text: #e8f5ee;
+  --text-on-surface: #ffffff;
+  --text-secondary: #8eb6a1;
+  --text-muted: #6a8b7c;
+
+  --error: #f47171;
+  --error-light: rgba(244, 113, 113, 0.18);
+  --warning: #f0bd6c;
+  --warning-light: rgba(240, 189, 108, 0.18);
+  --success: #6dd1a3;
+  --success-light: rgba(109, 209, 163, 0.18);
+  --info: #a8d5bc;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+html.dark-mode {
+  background: var(--background);
+}
+
+body.dark-mode {
+  background: var(--background) !important;
+  color: var(--text);
+}
+
+/* ===== Forms — Dark Mode ===== */
+.dark-mode .form-input,
+.dark-mode .user-type-dropdown {
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.dark-mode .form-input::placeholder,
+.dark-mode .user-type-dropdown::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode .form-input:focus,
+.dark-mode .user-type-dropdown:focus {
+  background: var(--surface-input);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(42, 138, 106, 0.25);
+}
+
+.dark-mode .error-message {
+  background: var(--error-light);
+  border: 1px solid rgba(244, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+/* ===== Buttons — Dark Mode ===== */
+.dark-mode .login-button,
+.dark-mode .submit-button {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .login-button:hover:not(:disabled),
+.dark-mode .submit-button:hover:not(:disabled) {
+  background: var(--primary-light);
+}
+
+.dark-mode .register-button,
+.dark-mode .back-button {
+  border: 1px solid var(--border-light);
+  color: var(--text);
+}
+
+.dark-mode .register-button:hover:not(:disabled),
+.dark-mode .back-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+/* ===== PrimaryNav — Dark Mode ===== */
+.dark-mode .primary-nav {
+  background: #0a221a;
+  border-bottom: 1px solid var(--border);
+}
+
+.dark-mode .search-input {
+  background: rgba(10, 34, 26, 0.6);
+  border-color: var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .search-input::placeholder {
+  color: rgba(232, 245, 238, 0.5);
+}
+
+.dark-mode .search-input:focus {
+  background: var(--surface-input);
+  border-color: var(--primary-light);
+}
+
+.dark-mode .search-icon {
+  color: rgba(232, 245, 238, 0.55);
+}
+
+.dark-mode .nav-icon-btn {
+  color: rgba(232, 245, 238, 0.85);
+}
+
+.dark-mode .nav-icon-btn:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .profile-menu {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-mode .menu-avatar {
+  background: var(--primary);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .menu-name {
+  color: var(--text-on-surface);
+}
+
+.dark-mode .menu-email {
+  color: var(--text-secondary);
+}
+
+.dark-mode .menu-divider {
+  background: var(--border);
+}
+
+.dark-mode .menu-item {
+  color: var(--text-on-surface);
+  background: none;
+}
+
+.dark-mode .menu-item:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .menu-logout {
+  color: #fca5a5;
+}
+
+.dark-mode .menu-logout:hover {
+  background: rgba(244, 113, 113, 0.15);
+  color: #fca5a5;
+}
+
+/* ===== Settings Modal — Dark Mode ===== */
+.dark-mode .settings-modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .settings-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .settings-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .close-btn {
+  color: var(--text-on-surface);
+}
+
+.dark-mode .close-btn:hover {
+  background: var(--surface-light);
+}
+
+.dark-mode .section-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .form-textarea {
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .form-input:focus,
+.dark-mode .form-textarea:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(42, 138, 106, 0.25);
+}
+
+.dark-mode .form-textarea::placeholder,
+.dark-mode .form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode .file-input {
+  background: rgba(10, 34, 26, 0.5);
+  border: 2px dashed var(--border-light);
+  color: var(--text-secondary);
+}
+
+.dark-mode .file-input:hover {
+  background: var(--surface-light);
+}
+
+.dark-mode .image-preview {
+  background: var(--surface-input);
+  border: 2px solid var(--border);
+}
+
+.dark-mode .skill-badge,
+.dark-mode .course-badge {
+  background: rgba(42, 138, 106, 0.18);
+  color: var(--info);
+  border: 1px solid rgba(42, 138, 106, 0.4);
+}
+
+.dark-mode .btn-save {
+  background: var(--primary-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .btn-cancel {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Profile — Dark Mode ===== */
+.dark-mode .profile-container {
+  color: var(--text);
+}
+
+.dark-mode .profile-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .profile-picture {
+  background: var(--surface-input);
+  border: 4px solid var(--border-light);
+}
+
+.dark-mode .profile-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.dark-mode .profile-section h3 {
+  color: var(--text-on-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.dark-mode .profile-section p,
+.dark-mode .profile-section li {
+  color: var(--text-secondary);
+}
+
+.dark-mode .profile-section a {
+  color: var(--info);
+}
+
+.dark-mode .profile-section a:hover {
+  color: var(--text-on-surface);
+}
+
+.dark-mode .skill-tag {
+  background: rgba(42, 138, 106, 0.18);
+  color: var(--info);
+  border: 1px solid rgba(42, 138, 106, 0.4);
+}
+
+.dark-mode .course-card {
+  background: rgba(42, 138, 106, 0.12);
+  color: var(--info);
+  border-left: 3px solid var(--primary-light);
+}
+
+.dark-mode .course-card:hover {
+  background: rgba(42, 138, 106, 0.22);
+}
+
+.dark-mode .docs-list li {
+  background: var(--surface-input);
+  border-left: 3px solid var(--primary-light);
+  color: var(--text-secondary);
+}
+
+/* ===== Admin Dashboard — Dark Mode ===== */
+.dark-mode .admin-dashboard {
+  background: var(--background);
+}
+
+.dark-mode .ad-sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.dark-mode .ad-sidebar-label {
+  color: var(--text-secondary);
+}
+
+.dark-mode .ad-nav-item {
+  color: var(--text-secondary);
+  background: none;
+  border-left: 3px solid transparent;
+}
+
+.dark-mode .ad-nav-item:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .ad-nav-item.active {
+  background: var(--surface-light);
+  border-left-color: var(--primary-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .ad-main {
+  background: var(--background);
+}
+
+.dark-mode .ad-placeholder {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+/* Admin Dashboard Tabs — Dark Mode */
+.dark-mode .ad-tab {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+
+.dark-mode .ad-tab:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .ad-tab.active {
+  background: var(--primary-light);
+  color: var(--text-on-surface);
+  border-color: var(--primary-light);
+  font-weight: 600;
+}
+
+/* Admin Dashboard Buttons — Dark Mode */
+.dark-mode .ns-broadcast-btn,
+.dark-mode .ns-mark-all-btn,
+.dark-mode .ns-toggle-btn {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+  border: 1px solid transparent;
+}
+
+.dark-mode .ns-broadcast-btn:hover,
+.dark-mode .ns-mark-all-btn:hover,
+.dark-mode .ns-toggle-btn:hover {
+  background: var(--primary-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode button[type="button"] {
+  color: inherit;
+}
+
+/* ===== Auth Pages — Dark Mode ===== */
+.dark-mode .auth-container {
+  background: var(--background);
+}
+
+.dark-mode .auth-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-mode .form-title,
+.dark-mode .form-subtitle {
+  color: var(--text-on-surface);
+}
+
+.dark-mode .toggle-password {
+  color: var(--text-secondary);
+}
+
+.dark-mode .toggle-password:hover {
+  color: var(--text-on-surface);
+}
+
+/* ===== Floating Messages — Dark Mode ===== */
+.dark-mode .fm-floating-button {
+  background: var(--primary);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .fm-floating-button:hover {
+  background: var(--primary-light);
+}
+
+.dark-mode .fm-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .fm-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.dark-mode .fm-header h3 {
+  color: var(--text-on-surface);
+}
+
+.dark-mode .fm-close-btn {
+  color: var(--text-secondary);
+}
+
+.dark-mode .fm-close-btn:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .fm-tabs {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.dark-mode .fm-tab {
+  color: var(--text-secondary);
+}
+
+.dark-mode .fm-tab.active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary-light);
+}
+
+.dark-mode .fm-textarea {
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.dark-mode .fm-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode .fm-textarea:focus {
+  border-color: var(--primary-light);
+}
+
+.dark-mode .fm-submit {
+  background: var(--primary);
+  color: var(--text-on-surface);
+}
+
+.dark-mode .fm-submit:hover {
+  background: var(--primary-light);
+}
+
+.dark-mode .fm-message {
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+}
+
+.dark-mode .fm-msg-text {
+  color: var(--text-secondary);
+}
+

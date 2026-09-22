@@ -1,0 +1,441 @@
+.ss-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.ss-group {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.ss-group-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin: 0 0 var(--spacing-lg) 0;
+  letter-spacing: -0.01em;
+}
+
+/* Stat card grid */
+.ss-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.ss-grid-content {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.ss-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid transparent;
+  background: rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.ss-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.ss-number {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Accent left border per card type */
+.ss-card-total      { border-left-color: var(--text-secondary); }
+.ss-card-student    { border-left-color: var(--info); }
+.ss-card-instructor { border-left-color: var(--warning); }
+.ss-card-employer   { border-left-color: #c4b5fd; }
+.ss-card-admin      { border-left-color: var(--error); }
+.ss-card-projects   { border-left-color: var(--success); }
+.ss-card-courses    { border-left-color: var(--surface-elevated); }
+
+/* Table */
+.ss-table-wrapper {
+  overflow-x: auto;
+}
+
+.ss-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ss-table th {
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.ss-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text-on-surface);
+}
+
+.ss-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ss-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ss-table tfoot td {
+  padding: var(--spacing-md);
+  border-top: 2px solid var(--border);
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.ss-total-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ss-count {
+  font-weight: 600;
+  color: var(--text-on-surface);
+  font-size: 15px;
+}
+
+.ss-total-count {
+  font-size: 16px;
+}
+
+/* Role badges */
+.ss-role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.ss-role-student    { background: rgba(168, 213, 188, 0.18); color: var(--info); border-color: rgba(168, 213, 188, 0.4); }
+.ss-role-instructor { background: var(--warning-light); color: var(--warning); border-color: rgba(224, 168, 84, 0.4); }
+.ss-role-employer   { background: rgba(196, 181, 253, 0.18); color: #c4b5fd; border-color: rgba(196, 181, 253, 0.4); }
+.ss-role-admin      { background: var(--error-light); color: var(--error); border-color: rgba(224, 92, 92, 0.4); }
+
+/* Percentage bar */
+.ss-pct-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.ss-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.ss-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 300ms ease;
+}
+
+.ss-bar-student    { background: var(--info); }
+.ss-bar-instructor { background: var(--warning); }
+.ss-bar-employer   { background: #c4b5fd; }
+.ss-bar-admin      { background: var(--error); }
+
+.ss-pct-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 36px;
+}
+
+/* ── Charts grid layout ── */
+.ss-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.ss-charts-three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 1100px) {
+  .ss-charts-three { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  .ss-charts-grid,
+  .ss-charts-three {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ss-chart-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ss-chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ss-chart-title {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.ss-chart-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ss-chart-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.ss-empty {
+  margin: 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 28px 0;
+}
+
+/* ── Donut ── */
+.ss-donut {
+  display: block;
+}
+
+.ss-donut-total {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  fill: var(--text-on-surface);
+}
+
+.ss-donut-label {
+  font-size: 11px;
+  fill: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ss-donut-empty-text {
+  font-size: 12px;
+  fill: var(--text-secondary);
+}
+
+.ss-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.ss-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-on-surface);
+}
+
+.ss-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ss-legend-label {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.ss-legend-value {
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.ss-legend-pct {
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* ── Vertical bar chart ── */
+.ss-bar-chart {
+  width: 100%;
+}
+
+.ss-bar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.ss-bar-item {
+  flex: 1 0 60px;
+  min-width: 56px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.ss-bar-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.ss-bar-track-v {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-height: 4px;
+}
+
+.ss-bar-fill-v {
+  width: 100%;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 250ms ease;
+}
+
+.ss-bar-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Segmented bar (status breakdowns) ── */
+.ss-segbar {
+  display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ss-segbar-piece {
+  height: 100%;
+}
+
+.ss-segbar-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ss-status-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.ss-status-list li {
+  display: grid;
+  grid-template-columns: 12px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.ss-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.ss-status-label {
+  color: var(--text-secondary);
+}
+
+.ss-status-value {
+  font-weight: 600;
+  color: var(--text-on-surface);
+  min-width: 28px;
+  text-align: right;
+}
+
+.ss-status-pct {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: right;
+}

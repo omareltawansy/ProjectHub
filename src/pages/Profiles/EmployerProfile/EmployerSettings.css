@@ -1,0 +1,338 @@
+.settings-container {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-on-surface);
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.close-btn:hover {
+  background: var(--surface-light);
+  color: var(--text-on-surface);
+}
+
+.settings-form {
+  padding: 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  display: block;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.settings-form .form-input,
+.settings-form .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface-input);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.settings-form .form-input:focus,
+.settings-form .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(168, 213, 188, 0.25);
+}
+
+.settings-form .form-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid var(--border);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-input {
+  padding: 12px;
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.file-input:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--text-secondary);
+}
+
+.skills-input-group,
+.course-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.skills-input-group .form-input,
+.course-input-group .form-input {
+  flex: 1;
+}
+
+.btn-add-skill,
+.btn-add-course,
+.btn-save,
+.btn-cancel {
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.btn-add-skill,
+.btn-add-course {
+  background: #ffffff;
+  color: var(--text);
+}
+
+.btn-add-skill:hover,
+.btn-add-course:hover {
+  background: var(--text-secondary);
+}
+
+.skills-list,
+.courses-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-badge,
+.course-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(168, 213, 188, 0.18);
+  color: var(--info);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(168, 213, 188, 0.4);
+}
+
+.skill-remove,
+.course-remove {
+  background: none;
+  border: none;
+  color: var(--info);
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 150ms ease;
+}
+
+.skill-remove:hover,
+.course-remove:hover {
+  color: var(--text-on-surface);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-save {
+  flex: 1;
+  background: #ffffff;
+  color: var(--text);
+}
+
+.btn-save:hover {
+  background: var(--text-secondary);
+}
+
+.btn-cancel {
+  flex: 1;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-help-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.doc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--info);
+}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-name {
+  font-weight: 500;
+  color: var(--text-on-surface);
+  font-size: 13px;
+}
+
+.doc-size {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.doc-remove {
+  background: transparent;
+  border: 1px solid rgba(224, 92, 92, 0.6);
+  color: #fca5a5;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.doc-remove:hover {
+  background: rgba(224, 92, 92, 0.18);
+  color: #fecaca;
+}
+
+.maps-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.maps-address-input {
+  flex: 1;
+}
+
+.maps-open-btn {
+  flex-shrink: 0;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-on-surface);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 150ms ease;
+}
+
+.maps-open-btn:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+.maps-preview iframe {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+}

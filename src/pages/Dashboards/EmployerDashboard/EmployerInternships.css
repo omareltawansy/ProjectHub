@@ -1,0 +1,599 @@
+.employer-internships-page {
+  min-height: calc(100vh - 60px);
+  background: var(--background);
+}
+
+.employer-internships-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.employer-internships-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.employer-internships-header h1 {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.employer-internships-header p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  max-width: 580px;
+  font-size: 14px;
+}
+
+.employer-internships-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.primary-button,
+.secondary-button {
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.primary-button {
+  background: var(--surface-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.primary-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.primary-button.secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.primary-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.secondary-button.danger {
+  background: transparent;
+  border: 1px solid rgba(224, 92, 92, 0.6);
+  color: var(--error);
+}
+
+.secondary-button.danger:hover {
+  background: var(--error-light);
+}
+
+.employer-internships-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.employer-internships-search {
+  flex: 1 1 320px;
+}
+
+.employer-internships-search input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.employer-internships-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.employer-internships-filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.employer-internships-filter-row label,
+.employer-internship-status-row label,
+.employer-applicant-header label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.employer-internships-filter-row select,
+.employer-internship-status-row select,
+.employer-applicant-header select,
+.employer-applicant-actions select {
+  min-width: 170px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.employer-internships-filter-row select:focus,
+.employer-internship-status-row select:focus,
+.employer-applicant-header select:focus,
+.employer-applicant-actions select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 82, 0.18);
+}
+
+.employer-internships-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+.employer-internships-list {
+  display: grid;
+  gap: 14px;
+}
+
+.employer-internship-card {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.employer-internship-card:hover,
+.employer-internship-card.selected {
+  background: var(--surface-light);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-md);
+}
+
+.employer-internship-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.employer-internship-company {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.employer-internship-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.employer-internship-status {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.employer-internship-status-open,
+.employer-internship-status-currently-hiring {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(76, 175, 130, 0.4);
+}
+
+.employer-internship-status-closed,
+.employer-internship-status-position-filled {
+  background: var(--error-light);
+  color: var(--error);
+  border-color: rgba(224, 92, 92, 0.4);
+}
+
+.employer-internship-status-interview {
+  background: rgba(168, 213, 188, 0.18);
+  color: var(--info);
+  border-color: rgba(168, 213, 188, 0.4);
+}
+
+.employer-internship-status-archived {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.employer-internship-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.employer-internship-meta-row span {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.employer-internship-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.employer-internship-panel-card {
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.employer-internship-panel-card h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.employer-panel-top-row {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.employer-panel-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.employer-internship-type {
+  margin: 0 0 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.employer-internship-description {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 14px;
+  margin: 0;
+}
+
+.employer-internship-status-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.employer-internship-status-row > div {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.employer-internship-status-row strong {
+  color: var(--text-on-surface);
+  font-weight: 500;
+}
+
+.employer-internship-panel-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.employer-internship-panel-meta span {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.employer-section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.employer-suggested-section,
+.employer-applicant-section {
+  display: grid;
+  gap: 12px;
+}
+
+.employer-applicant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.employer-suggested-card,
+.employer-applicant-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.employer-applicant-name {
+  font-weight: 600;
+  color: var(--text-on-surface);
+}
+
+.employer-applicant-detail {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.employer-match-score {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 600;
+  color: var(--text-on-surface);
+  font-size: 13px;
+}
+
+.employer-applicant-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.applicant-status {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.applicant-status-applied {
+  background: var(--warning-light);
+  color: var(--warning);
+  border-color: rgba(224, 168, 84, 0.4);
+}
+
+.applicant-status-interview {
+  background: rgba(168, 213, 188, 0.18);
+  color: var(--info);
+  border-color: rgba(168, 213, 188, 0.4);
+}
+
+.applicant-status-hired {
+  background: var(--success-light);
+  color: var(--success);
+  border-color: rgba(76, 175, 130, 0.4);
+}
+
+.applicant-status-rejected {
+  background: var(--error-light);
+  color: var(--error);
+  border-color: rgba(224, 92, 92, 0.4);
+}
+
+.employer-empty,
+.employer-empty-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.employer-empty-panel h2 {
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin: 0 0 6px;
+}
+
+.employer-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.employer-form-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-on-surface);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.employer-form-header button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.employer-form-header button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-surface);
+}
+
+.employer-internship-form-card {
+  position: relative;
+  background: var(--surface);
+  color: var(--text-on-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: min(720px, 100%);
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.employer-internship-form-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 77, 58, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.employer-internship-form {
+  display: grid;
+  gap: 14px;
+}
+
+.employer-internship-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.employer-internship-form input,
+.employer-internship-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: var(--surface-input);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.employer-internship-form input:focus,
+.employer-internship-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(168, 213, 188, 0.25);
+}
+
+.employer-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1060px) {
+  .employer-internships-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .employer-internships-header,
+  .employer-internships-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .employer-internships-actions {
+    justify-content: flex-start;
+  }
+
+  .employer-applicant-actions {
+    align-items: flex-start;
+  }
+
+  .employer-internship-panel-meta {
+    grid-template-columns: 1fr;
+  }
+}
