@@ -368,8 +368,8 @@ function NotificationsSection({ userEmail }) {
 
 export default function StudentDashboard({ user, onNavigate }) {
   const {
-    internships: internshipSource, projects, notifications, tasks,
-    updateInternships, updateProjects, updateProject,
+    internships: internshipSource, projects,
+    updateInternships, updateProject,
     projectInvitations, deleteProjectInvitation,
   } = useAppData();
   const navigate = useNavigate();

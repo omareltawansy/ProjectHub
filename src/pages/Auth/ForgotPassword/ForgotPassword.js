@@ -3,7 +3,7 @@ import { useAppData } from '../../../data/useAppData';
 import './ForgotPassword.css';
 
 export default function ForgotPassword({ navigateTo }) {
-    const { users } = useAppData();
+    const { users, updateUser } = useAppData();
     const [step, setStep] = useState(1); // Step 1: Email, Step 2: OTP, Step 3: New Password
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
@@ -85,8 +85,10 @@ export default function ForgotPassword({ navigateTo }) {
             return;
         }
 
-        console.log('Password reset successful for:', email);
-        console.log('New password:', newPassword);
+        const userToUpdate = users.find((user) => user.email === email);
+        if (userToUpdate) {
+            updateUser(userToUpdate.id, { password: newPassword });
+        }
 
         setTimeout(() => {
             setLoading(false);

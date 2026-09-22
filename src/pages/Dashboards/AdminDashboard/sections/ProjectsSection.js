@@ -4,6 +4,7 @@ import {
   Star, ExternalLink, GitBranch, FileText, Video,
 } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
+import { safeUrl } from '../../../../utils/safeUrl.js';
 import { useToast } from '../../../../components/Toast/Toast.js';
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal.js';
 import './ProjectsSection.css';
@@ -406,7 +407,7 @@ export default function ProjectsSection() {
                                       <ul className="ps-detail-links">
                                         {project.githubLink && (
                                           <li>
-                                            <a href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                                            <a href={safeUrl(project.githubLink)} target="_blank" rel="noopener noreferrer">
                                               <GitBranch size={14} />
                                               GitHub repository
                                               <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.5 }} />
@@ -415,7 +416,7 @@ export default function ProjectsSection() {
                                         )}
                                         {project.reportLink && (
                                           <li>
-                                            <a href={project.reportLink} target="_blank" rel="noopener noreferrer">
+                                            <a href={safeUrl(project.reportLink)} target="_blank" rel="noopener noreferrer">
                                               <FileText size={14} />
                                               Project report
                                               <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.5 }} />
@@ -424,7 +425,7 @@ export default function ProjectsSection() {
                                         )}
                                         {project.demoVideo && (
                                           <li>
-                                            <a href={project.demoVideo} target="_blank" rel="noopener noreferrer">
+                                            <a href={safeUrl(project.demoVideo)} target="_blank" rel="noopener noreferrer">
                                               <Video size={14} />
                                               Demo video
                                               <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.5 }} />

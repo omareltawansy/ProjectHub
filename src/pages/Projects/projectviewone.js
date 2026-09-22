@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppData } from '../../data/useAppData.js';
+import { safeUrl } from '../../utils/safeUrl.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Link, FileText, Play, Edit2, Trash2, Plus,
@@ -494,9 +495,9 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
         </div>
 
         <div className="pvo-links">
-          {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="pvo-link"><Link size={16} /> GitHub</a>}
-          {project.report && <a href={project.report} target="_blank" rel="noopener noreferrer" className="pvo-link"><FileText size={16} /> Report</a>}
-          {project.demoVideo && <a href={project.demoVideo} target="_blank" rel="noopener noreferrer" className="pvo-link"><Play size={16} /> Demo Video</a>}
+          {project.github && <a href={safeUrl(project.github)} target="_blank" rel="noopener noreferrer" className="pvo-link"><Link size={16} /> GitHub</a>}
+          {project.report && <a href={safeUrl(project.report)} target="_blank" rel="noopener noreferrer" className="pvo-link"><FileText size={16} /> Report</a>}
+          {project.demoVideo && <a href={safeUrl(project.demoVideo)} target="_blank" rel="noopener noreferrer" className="pvo-link"><Play size={16} /> Demo Video</a>}
         </div>
 
         {project.isBachelor ? (

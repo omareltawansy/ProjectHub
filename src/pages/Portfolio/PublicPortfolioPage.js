@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, Link } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import { useAppData } from '../../data/useAppData';
 import './portfolio.css';

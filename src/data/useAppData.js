@@ -66,7 +66,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       users: [...prev.users, {
-        id: Math.max(...prev.users.map(u => u.id), 0) + 1,
+        id: Math.max(...prev.users.map(u => Number(u.id) || 0), 0) + 1,
         active: true,
         ...user,
       }],
@@ -89,7 +89,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       projects: [...prev.projects, { 
-        id: Math.max(...prev.projects.map(p => p.id), 0) + 1, 
+        id: Math.max(...prev.projects.map(p => Number(p.id) || 0), 0) + 1, 
         ...project 
       }]
     }));
@@ -111,7 +111,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       portfolios: [...prev.portfolios, {
-        id: Math.max(...prev.portfolios.map(p => p.id), 0) + 1,
+        id: Math.max(...prev.portfolios.map(p => Number(p.id) || 0), 0) + 1,
         ...portfolio,
       }],
     }));
@@ -133,7 +133,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       notifications: [...prev.notifications, { 
-        id: Math.max(...prev.notifications.map(n => n.id), 0) + 1, 
+        id: Math.max(...prev.notifications.map(n => Number(n.id) || 0), 0) + 1, 
         ...notification 
       }]
     }));
@@ -162,7 +162,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, { 
-        id: Math.max(...prev.messages.map(m => m.id), 0) + 1, 
+        id: Math.max(...prev.messages.map(m => Number(m.id) || 0), 0) + 1, 
         ...message 
       }]
     }));
@@ -184,7 +184,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       internships: [...prev.internships, { 
-        id: Math.max(...prev.internships.map(i => i.id), 0) + 1, 
+        id: Math.max(...prev.internships.map(i => Number(i.id) || 0), 0) + 1, 
         ...internship 
       }]
     }));
@@ -199,7 +199,7 @@ export function useAppData() {
           ? { 
               ...i, 
               applicants: [...i.applicants, { 
-                id: Math.max(...i.applicants.map(a => a.id), 0) + 1, 
+                id: Math.max(...i.applicants.map(a => Number(a.id) || 0), 0) + 1, 
                 ...applicant 
               }] 
             }
@@ -240,7 +240,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       tasks: [...prev.tasks, {
-        id: Math.max(...prev.tasks.map(t => t.id), 0) + 1,
+        id: Math.max(...prev.tasks.map(t => Number(t.id) || 0), 0) + 1,
         ...task
       }]
     }));
@@ -269,7 +269,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       employers: [...prev.employers, { 
-        id: Math.max(...prev.employers.map(e => e.id), 0) + 1, 
+        id: Math.max(...prev.employers.map(e => Number(e.id) || 0), 0) + 1, 
         ...employer 
       }]
     }));
@@ -360,7 +360,7 @@ export function useAppData() {
     setState(prev => ({
       ...prev,
       ciLinkRequests: [...prev.ciLinkRequests, { 
-        id: Math.max(...prev.ciLinkRequests.map(r => r.id), 0) + 1, 
+        id: Math.max(...prev.ciLinkRequests.map(r => Number(r.id) || 0), 0) + 1, 
         ...request 
       }]
     }));

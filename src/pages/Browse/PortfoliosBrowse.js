@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Search, User, Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import { useAppData } from '../../data/useAppData';
 import './PortfoliosBrowse.css';
 
 export default function PortfoliosBrowse({ user, onNavigate }) {
   const { portfolios, favorites, addFavorite, removeFavorite } = useAppData();
-  const navigate = useNavigate();
-  
+
   const majors = [...new Set(portfolios.map(p => p.major))].sort();
   const allSkills = [...new Set(portfolios.flatMap(p => p.skills))].sort();
   

@@ -48,7 +48,8 @@ export default function Login({ navigateTo }) {
             }
 
             // Login successful
-            localStorage.setItem('currentUser', JSON.stringify(foundUser));
+            const { password: _password, ...safeUser } = foundUser;
+            localStorage.setItem('currentUser', JSON.stringify(safeUser));
             window.location.href = `/${foundUser.role}-dashboard`;
         }, 1500);
     };

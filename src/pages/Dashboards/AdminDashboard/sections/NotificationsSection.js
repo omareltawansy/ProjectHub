@@ -83,6 +83,13 @@ export default function NotificationsSection() {
       setError('Message is required.');
       return;
     }
+    if (message.trim().length > 300) {
+      setError('Message must be 300 characters or fewer.');
+      return;
+    }
+    if (role === 'multi' && !window.confirm('Send this notification to all roles?')) {
+      return;
+    }
     nextNotifId += 1;
     const newNotif = {
       id: nextNotifId,

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Star, ExternalLink, FolderKanban, Heart } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import { useAppData } from '../../data/useAppData';
+import { safeUrl } from '../../utils/safeUrl';
 import './ProjectsBrowse.css';
 
 export default function ProjectsBrowse({ user, onNavigate }) {
@@ -281,17 +282,17 @@ export default function ProjectsBrowse({ user, onNavigate }) {
                   <div className="pbr-detail-label">Links</div>
                   <div className="pbr-links">
                     {selected.github && (
-                      <a href={selected.github} target="_blank" rel="noreferrer" className="pbr-link">
+                      <a href={safeUrl(selected.github)} target="_blank" rel="noreferrer" className="pbr-link">
                         <ExternalLink size={13} /> GitHub
                       </a>
                     )}
                     {selected.report && (
-                      <a href={selected.report} target="_blank" rel="noreferrer" className="pbr-link">
+                      <a href={safeUrl(selected.report)} target="_blank" rel="noreferrer" className="pbr-link">
                         <ExternalLink size={13} /> Report
                       </a>
                     )}
                     {selected.demoVideo && (
-                      <a href={selected.demoVideo} target="_blank" rel="noreferrer" className="pbr-link">
+                      <a href={safeUrl(selected.demoVideo)} target="_blank" rel="noreferrer" className="pbr-link">
                         <ExternalLink size={13} /> Demo video
                       </a>
                     )}

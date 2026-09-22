@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin, Globe, Phone, Mail, Edit2, Briefcase, BarChart2 } fr
 import PrimaryNav from '../../../components/PrimaryNav/PrimaryNav.js';
 import EmployerSettings from './EmployerSettings.js';
 import { useAppData } from '../../../data/useAppData.js';
+import { safeUrl } from '../../../utils/safeUrl.js';
 import './EmployerPublicProfile.css';
 
 export default function EmployerPublicProfile({ user, onNavigate }) {
@@ -137,7 +138,7 @@ export default function EmployerPublicProfile({ user, onNavigate }) {
               {employer.website && (
                 <div className="epro-contact-row">
                   <Globe size={15} className="epro-contact-icon" />
-                  <a href={employer.website} target="_blank" rel="noopener noreferrer" className="epro-link">
+                  <a href={safeUrl(employer.website)} target="_blank" rel="noopener noreferrer" className="epro-link">
                     {employer.website.replace(/^https?:\/\//, '')}
                   </a>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppData } from '../../data/useAppData';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
@@ -23,7 +23,6 @@ export default function Internships({ user, onNavigate }) {
   const [pendingApply, setPendingApply] = useState(null);
   const [pendingWithdraw, setPendingWithdraw] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
   const toast = useToast();
 
   // Sync local state with hook data whenever internshipSource changes

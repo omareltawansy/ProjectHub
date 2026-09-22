@@ -1,4 +1,5 @@
 import React from 'react';
+import { safeUrl } from '../../../utils/safeUrl';
 import './EmployerProfile.css';
 
 export default function EmployerProfile({ user }) {
@@ -35,7 +36,7 @@ export default function EmployerProfile({ user }) {
         {user.website && (
           <section className="profile-section">
             <h3>Website</h3>
-            <a href={user.website} target="_blank" rel="noopener noreferrer">{user.website}</a>
+            <a href={safeUrl(user.website)} target="_blank" rel="noopener noreferrer">{user.website}</a>
           </section>
         )}
 
