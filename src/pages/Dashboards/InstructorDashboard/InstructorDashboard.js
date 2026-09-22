@@ -529,6 +529,7 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
   // ── Project handlers ────────────────────────────────────────────────────────
   const handleRateProject = (projectId, rating) => {
     setProjectData(prev => prev.map(p => p.id === projectId ? { ...p, rating } : p));
+    updateProject(projectId, { rating });
     toast.success('Rating saved');
   };
 

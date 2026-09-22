@@ -136,6 +136,8 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
 
   const handleSaveProject = () => {
     setProject(editProject);
+    const updatedProjects = allProjects.map(p => p.id === project.id ? editProject : p);
+    updateProjects(updatedProjects);
     setShowEditProject(false);
   };
 

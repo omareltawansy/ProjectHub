@@ -194,9 +194,11 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
 
   const confirmTogglePortfolio = () => {
     if (portfolioProjectId) {
-      setProjects(projects.map(p => 
+      const updated = projects.map(p =>
         p.id === portfolioProjectId ? { ...p, onPortfolio: !p.onPortfolio } : p
-      ));
+      );
+      setProjects(updated);
+      updateProjects(updated);
       setShowPortfolioConfirm(false);
       setPortfolioAction(null);
       setPortfolioProjectId(null);
@@ -243,13 +245,15 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
   };
 
   const confirmPrivateWarning = () => {
-    setProjects(projects.map(p => {
+    const updated = projects.map(p => {
       if (pendingPortfolioProjects.find(pp => pp.id === p.id)) {
         return { ...p, onPortfolio: true, visibility: 'public' };
       }
       return p;
-    }));
-    
+    });
+    setProjects(updated);
+    updateProjects(updated);
+
     setShowPrivateWarning(false);
     setPendingPortfolioProjects([]);
     setPortfolioAction(null);
@@ -273,9 +277,11 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
     const status = getSelectedPortfolioStatus();
     const newOnPortfolioValue = status === 'all-off';
 
-    setProjects(projects.map(p =>
+    const updated = projects.map(p =>
       selectedProjects.has(p.id) ? { ...p, onPortfolio: newOnPortfolioValue } : p
-    ));
+    );
+    setProjects(updated);
+    updateProjects(updated);
 
     setSelectedProjects(new Set());
     setShowPortfolioModal(false);
@@ -293,17 +299,21 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       setVisibilityProjectId(id);
       setShowVisibilityWarning(true);
     } else if (project) {
-      setProjects(projects.map(p =>
+      const updated = projects.map(p =>
         p.id === id ? { ...p, visibility: 'private' } : p
-      ));
+      );
+      setProjects(updated);
+      updateProjects(updated);
     }
   };
 
   const confirmVisibilityChange = () => {
     if (visibilityProjectId) {
-      setProjects(projects.map(p =>
+      const updated = projects.map(p =>
         p.id === visibilityProjectId ? { ...p, visibility: 'public' } : p
-      ));
+      );
+      setProjects(updated);
+      updateProjects(updated);
       setShowVisibilityWarning(false);
       setVisibilityProjectId(null);
     }

@@ -1,11 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MessageSquare, X, Send, List, ArrowLeft } from 'lucide-react';
 import { useAppData } from '../../data/useAppData.js';
 import './FloatingMessages.css';
 
 export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages, currentUser }) {
-  const { messages: initialMessages } = useAppData();
+  const { messages: initialMessages, addMessage } = useAppData();
   const [messages, setMessages] = useState(initialMessages);
+
+  // Keep local copy in sync with the global store (other components can add messages too)
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
   const [activeTab, setActiveTab] = useState('quick');
   const [recipient, setRecipient] = useState('');
   const [quickMessage, setQuickMessage] = useState('');
@@ -54,9 +59,7 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
     if (!body || !recipient) return;
 
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
-    const nextId = Math.max(0, ...messages.map((m) => Number(m.id) || 0)) + 1;
     const newMessage = {
-      id: nextId,
       conversationId: `quick-${Date.now()}`,
       sender: senderName,
       senderRole,
@@ -67,7 +70,7 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
       read: false,
     };
 
-    setMessages((prev) => [newMessage, ...prev]);
+    addMessage(newMessage);
     setQuickMessage('');
   };
 
@@ -78,7 +81,6 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
     const recipientName = latest.senderRole === senderRole ? latest.recipient : latest.sender;
     const recipientRole = latest.senderRole === senderRole ? latest.recipientRole : latest.senderRole;
     const newMessage = {
-      id: Math.max(0, ...messages.map((m) => Number(m.id) || 0)) + 1,
       conversationId: activeConversation.id,
       sender: senderName,
       senderRole,
@@ -88,7 +90,7 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
       time: new Date().toISOString().slice(0, 16).replace('T', ' '),
       read: false,
     };
-    setMessages((prev) => [...prev, newMessage]);
+    addMessage(newMessage);
     setChatDraft('');
   };
 

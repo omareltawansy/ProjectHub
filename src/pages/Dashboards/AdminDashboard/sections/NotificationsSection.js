@@ -92,7 +92,9 @@ export default function NotificationsSection() {
       time: nowStamp(),
       read: false,
     };
-    setNotifications(prev => [newNotif, ...prev]);
+    const updatedNotifications = [newNotif, ...notifications];
+    setNotifications(updatedNotifications);
+    updateNotifications(updatedNotifications);
     toast.success(`Notification sent to ${BROADCAST_ROLES.find(r => r.value === role)?.label || role}.`);
     setBroadcastOpen(false);
   };
