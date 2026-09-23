@@ -21,6 +21,10 @@ import { useToast } from '../../../components/Toast/Toast';
 import FloatingMessages from '../../../components/FloatingMessages/FloatingMessages.js';
 import { useAppData } from '../../../data/useAppData.js';
 import MessagesSection from '../AdminDashboard/sections/MessagesSection.js';
+import { useSectionParam } from '../../../hooks/useSectionParam';
+import { notificationsFor, isNotificationRead } from '../../../utils/notifications';
+import { activatableProps } from '../../../utils/a11y';
+import { nowStamp, todayISO, formatDate } from '../../../utils/time';
 import './InstructorDashboard.css';
 
 const BACHELOR_ID = 1;
@@ -32,11 +36,6 @@ const NAV_ITEMS = [
   { key: 'Invitations', icon: Mail },
 ];
 
-const MOCK_INVITATIONS = [
-  { id: 1, from: 'Ahmed Hassan',  project: 'E-Commerce Website',    course: 'Web Development',  date: 'May 1' },
-  { id: 2, from: 'Sara Nour',     project: 'AI Image Classifier',   course: 'Machine Learning', date: 'May 3' },
-  { id: 3, from: 'Omar Khalil',   project: 'Real-Time Chat App',    course: 'Web Development',  date: 'May 8' },
-];
 
 // ─── Star picker ─────────────────────────────────────────────────────────────
 function StarPicker({ value, onChange }) {
@@ -276,7 +275,7 @@ function ProjectsSection({ myProjects, onRate, onAddComment, onEditComment, onDe
             <div
               key={p.id}
               className={`id-project-row id-project-list-item${selectedId === p.id ? ' selected' : ''}`}
-              onClick={() => handleSelect(p.id)}
+              {...activatableProps(() => handleSelect(p.id), { selected: selectedId === p.id })}
             >
               <div className="id-project-info">
                 <div className="id-project-name">{p.title}</div>
@@ -367,7 +366,7 @@ function ProjectsSection({ myProjects, onRate, onAddComment, onEditComment, onDe
                       <div className="id-comment-body">
                         <div className="id-comment-header">
                           <span className="id-comment-author">{c.author}</span>
-                          <span className="id-comment-date">{c.date}</span>
+                          <span className="id-comment-date">{formatDate(c.date)}</span>
                         </div>
                         <p className="id-comment-text">{c.text}</p>
                       </div>
@@ -469,8 +468,8 @@ function InvitationsSection({ invitations, onAccept, onDecline }) {
         invitations.map(inv => (
           <div key={inv.id} className="id-inv-row">
             <div className="id-inv-info">
-              <div className="id-inv-project">{inv.project}</div>
-              <div className="id-inv-meta">from {inv.from} · {inv.course} · {inv.date}</div>
+              <div className="id-inv-project">{inv.projectTitle}</div>
+              <div className="id-inv-meta">from {inv.fromUserName} · {inv.course} · {formatDate(inv.date)}</div>
             </div>
             <div className="id-inv-btns">
               <button className="id-inv-accept" onClick={() => onAccept(inv)}>
@@ -489,10 +488,13 @@ function InvitationsSection({ invitations, onAccept, onDecline }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function InstructorDashboard({ user, onNavigate, onSectionNavigate }) {
-  const { courses, projects, updateProject, addNotification, notifications: notificationsSource } = useAppData();
+  const {
+    courses, projects, updateProject, addNotification, notifications: notificationsSource,
+    projectInvitations, deleteProjectInvitation,
+  } = useAppData();
   const toast = useToast();
 
-  const [activeSection,   setActiveSection]   = useState('Overview');
+  const [activeSection, setActiveSection] = useSectionParam('Overview');
   const [messagesOpen,    setMessagesOpen]     = useState(false);
   const [pendingFlag,     setPendingFlag]      = useState(null);
 
@@ -504,12 +506,13 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
   const [projectData, setProjectData] = useState(() =>
     projects.map(p => ({ flagged: false, flagReason: null, appeal: null, rating: null, comments: [], status: 'Active', studentName: '', ...p }))
   );
-  const [invitations, setInvitations] = useState(MOCK_INVITATIONS);
+  // Supervision requests addressed to this instructor.
+  const invitations = (projectInvitations || []).filter(
+    inv => inv.status === 'pending' && (inv.toUserEmail || '').toLowerCase() === (user?.email || '').toLowerCase()
+  );
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const myCourses     = courses.filter(c => linkedCourseIds.includes(c.id));
   const myCourseNames = myCourses.map(c => c.name);
@@ -534,7 +537,7 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
   };
 
   const handleAddComment = (projectId, text) => {
-    const comment = { id: Date.now(), author: user.name, text, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+    const comment = { id: Date.now(), author: user.name, text, date: todayISO() };
     setProjectData(prev =>
       prev.map(p => {
         if (p.id !== projectId) return p;
@@ -547,7 +550,7 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
             role: 'student',
             recipientEmail: p.studentEmail,
             message: `${user.name} added a comment on your project "${p.title}": "${text.slice(0, 60)}${text.length > 60 ? '…' : ''}"`,
-            time: 'Just now',
+            time: nowStamp(),
             read: false,
           });
         }
@@ -598,7 +601,7 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
         role: 'student',
         recipientEmail: project.studentEmail,
         message: `Your project "${project.title}" has been flagged. Reason: "${reason}". You can submit an appeal from your project page.`,
-        time: 'Just now',
+        time: nowStamp(),
         read: false,
       });
     }
@@ -607,14 +610,33 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
   };
 
   // ── Invitation handlers ─────────────────────────────────────────────────────
+  const notifyInviter = (inv, accepted) => {
+    if (!inv.fromUserEmail) return;
+    addNotification({
+      type: 'invitation',
+      role: 'student',
+      recipientEmail: inv.fromUserEmail,
+      message: `${user.name} ${accepted ? 'accepted' : 'declined'} your request to supervise "${inv.projectTitle}".`,
+      time: nowStamp(),
+      read: false,
+    });
+  };
+
   const handleAcceptInvitation = (inv) => {
-    setInvitations(prev => prev.filter(i => i.id !== inv.id));
-    toast.success(`Accepted invitation for "${inv.project}"`);
+    const project = projects.find(p => p.id === inv.projectId);
+    if (project) {
+      const supervisors = (project.supervisors || []).filter(s => s.email !== user.email);
+      updateProject(project.id, { supervisors: [...supervisors, { name: user.name, email: user.email }] });
+    }
+    deleteProjectInvitation(inv.id);
+    notifyInviter(inv, true);
+    toast.success(`Accepted invitation for "${inv.projectTitle}"`);
   };
 
   const handleDeclineInvitation = (inv) => {
-    setInvitations(prev => prev.filter(i => i.id !== inv.id));
-    toast.info(`Declined invitation for "${inv.project}"`);
+    deleteProjectInvitation(inv.id);
+    notifyInviter(inv, false);
+    toast.info(`Declined invitation for "${inv.projectTitle}"`);
   };
 
   // ── Render ──────────────────────────────────────────────────────────────────
@@ -660,7 +682,8 @@ export default function InstructorDashboard({ user, onNavigate, onSectionNavigat
       case 'Messages':
         return <MessagesSection user={user} />;
       case 'Notifications': {
-        const relevant = notificationsSource.filter(n => n.role === 'multi' || n.role === 'instructor');
+        const relevant = notificationsFor(notificationsSource, user)
+          .map(n => ({ ...n, read: isNotificationRead(n, user) }));
         const unread = relevant.filter(n => !n.read).length;
         return (
           <div className="id-card">

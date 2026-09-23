@@ -300,3 +300,7 @@
   color: var(--text-secondary);
   font-size: 14px;
 }
+button.atv-check:not(.done) {
+  background: transparent;
+  color: inherit;
+}

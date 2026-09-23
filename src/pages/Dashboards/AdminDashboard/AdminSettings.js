@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { X, Bell, BellOff } from 'lucide-react';
 import { useToast } from '../../../components/Toast/Toast';
+import { useAppData } from '../../../data/useAppData';
+import { resizeImageFile } from '../../../utils/image';
 import './AdminSettings.css';
 
 export default function AdminSettings({ user, onClose }) {
   const toast = useToast();
+  const { updateUser } = useAppData();
   const [formData, setFormData] = useState({
     profilePicture: user.profilePicture || '',
     bio: user.bio || '',
@@ -30,23 +33,21 @@ export default function AdminSettings({ user, onClose }) {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImagePreview(reader.result);
-        setFormData(prev => ({
-          ...prev,
-          profilePicture: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageFile(file);
+      setProfileImagePreview(dataUrl);
+      setFormData(prev => ({ ...prev, profilePicture: dataUrl }));
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   const handleSave = () => {
     const updatedUser = { ...user, ...formData };
+    updateUser(user.id, formData);
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     localStorage.setItem('adminNotificationsEnabled', String(notificationsEnabled));
     toast.success('Settings saved successfully!');

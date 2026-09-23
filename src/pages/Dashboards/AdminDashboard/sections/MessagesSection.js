@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Send } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
+import { nowStamp } from '../../../../utils/time';
 import './MessagesSection.css';
 
 function formatTime(timeStr) {
@@ -50,7 +51,7 @@ export default function MessagesSection({ user }) {
     e.preventDefault();
     if (!draft.trim() || !activeConversation) return;
 
-    const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const now = nowStamp();
     const latest = activeConversation.messages[activeConversation.messages.length - 1];
     const recipient = latest.senderRole === 'admin' ? latest.recipient : latest.sender;
     const recipientRole = latest.senderRole === 'admin' ? latest.recipientRole : latest.senderRole;
@@ -60,8 +61,10 @@ export default function MessagesSection({ user }) {
       conversationId: activeConversation.id,
       sender: user?.name || 'Admin User',
       senderRole: 'admin',
+      senderEmail: user?.email,
       recipient,
       recipientRole,
+      recipientEmail: latest.senderRole === 'admin' ? latest.recipientEmail : latest.senderEmail,
       text: draft.trim(),
       time: now,
       read: false,

@@ -7,6 +7,9 @@ import {
   Search, X, AlertCircle, Lock, Globe, User, Calendar,
 } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav.js';
+import { isProjectMember, isProjectOwner } from '../../utils/ownership';
+import Dialog from '../../components/Dialog/Dialog';
+import { nowStamp, todayISO, formatDate } from '../../utils/time';
 import './projectviewone.css';
 
 export default function ProjectViewOne({ user, onNavigate, inline = false, onBack, projectId: propProjectId }) {
@@ -23,12 +26,8 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
 
   const foundProject = allProjects.find(p => p.id === parseInt(projectId));
 
-  // Owner = created this project OR matches studentEmail/studentName field
-  const isOwner = !foundProject || (
-    (foundProject.studentEmail && foundProject.studentEmail === user?.email) ||
-    (foundProject.studentName  && foundProject.studentName  === user?.name)  ||
-    (!foundProject.studentEmail && !foundProject.studentName) // user-created projects (no studentEmail set)
-  );
+  const isOwner = isProjectOwner(foundProject, user);
+  const canView = !!foundProject && (foundProject.visibility !== 'private' || isProjectMember(foundProject, user));
 
   const normalizeProject = (p) => ({
     ...p,
@@ -52,16 +51,18 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
   // Tasks are sourced from the global store, filtered to this project
   const projectTasks = allTasks.filter(t => t.projectId === project.id);
 
-  const [feedback] = useState([
-    { id: 1, author: 'Dr. Fatima', role: 'Project', date: 'May 2', rating: 4.0, text: 'Overall solid project. The architecture is clean but the authentication flow needs improvement before submission.', tags: ['Project'] },
-    { id: 2, author: 'Dr. Fatima', role: 'Task: Fix login bug', date: 'May 4', rating: null, text: 'This needs to be resolved urgently. The JWT token expiry is not handled correctly.', tags: ['Task', 'Fix login bug'] },
-  ]);
+  // Instructor feedback lives on the project as `comments`.
+  const feedback = (foundProject?.comments || []).map(c => ({
+    id: c.id,
+    author: c.author,
+    role: c.taskTitle ? `Task: ${c.taskTitle}` : 'Project',
+    date: formatDate(c.date),
+    rating: c.rating ?? null,
+    text: c.text,
+    tags: c.taskTitle ? ['Task', c.taskTitle] : ['Project'],
+  }));
 
-  const [thesis, setThesis] = useState([
-    { id: 1, title: 'thesis_v3_final.pdf', uploadDate: 'Feb 12, 2025', size: '4.2 MB', isFinal: true },
-    { id: 2, title: 'thesis_v2.pdf', uploadDate: 'Jan 28, 2025', size: '3.8 MB', isFinal: false },
-    { id: 3, title: 'thesis_v1.pdf', uploadDate: 'Jan 10, 2025', size: '3.1 MB', isFinal: false },
-  ]);
+  const [thesis, setThesis] = useState(foundProject?.thesis || []);
 
   const [showSearchCollaborators, setShowSearchCollaborators] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,10 +88,8 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
   // Local display order for tasks — reorder is visual-only (not persisted)
   const [taskOrderIds, setTaskOrderIds] = useState(() => projectTasks.map(t => t.id));
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const handleVisibilityToggle = () => {
     if (project.visibility === 'private') {
@@ -171,7 +170,7 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
     const newDrafts = files.map((f, idx) => ({
       id: Date.now() + idx,
       title: f.name,
-      uploadDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      uploadDate: todayISO(),
       size: `${(f.size / (1024 * 1024)).toFixed(1)} MB`,
       isFinal: false,
     }));
@@ -383,6 +382,9 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
         <div className="pvo-rating-value">{overallRating.toFixed(1)} / 5</div>
       </div>
       <div className="pvo-feedback-list">
+        {feedback.length === 0 && (
+          <p style={{ color: 'var(--text-secondary)', fontSize: 13 }}>No feedback from instructors yet.</p>
+        )}
         {feedback.map(fb => (
           <div key={fb.id} className="pvo-feedback-item">
             <div className="pvo-feedback-header">
@@ -506,7 +508,7 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
               <div className="pvo-card-header">
                 <h2>Thesis Drafts</h2>
                 {isOwner && (
-                  <label className="pvo-btn-icon" title="Upload draft" style={{ cursor: 'pointer' }}>
+                  <label className="pvo-btn-icon" title="Upload draft (demo: only the file name and size are saved)" aria-label="Upload thesis draft" style={{ cursor: 'pointer' }}>
                     <Plus size={18} />
                     <input type="file" accept=".pdf,.doc,.docx" multiple hidden onChange={handleThesisUpload} />
                   </label>
@@ -518,7 +520,7 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
                     <div className="pvo-thesis-icon">📄</div>
                     <div className="pvo-thesis-info">
                       <div className="pvo-thesis-name">{draft.title}</div>
-                      <div className="pvo-thesis-meta">Uploaded {draft.uploadDate} · {draft.size}</div>
+                      <div className="pvo-thesis-meta">Uploaded {formatDate(draft.uploadDate)} · {draft.size}</div>
                     </div>
                     <div className="pvo-thesis-actions">
                       {draft.isFinal
@@ -605,7 +607,7 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
                                   role: 'student',
                                   recipientEmail: student.email,
                                   message: `${user.name} invited you to join "${project.title}"`,
-                                  time: new Date().toISOString(),
+                                  time: nowStamp(),
                                   read: false,
                                 });
                                 // Save collaborators list to project in global store
@@ -668,7 +670,7 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
       {/* Collaborator Remove / Cancel Invite Modal */}
       {showCollabModal && collabToRemove && (
         <div className="pvo-modal-overlay" onClick={cancelCollabRemove}>
-          <div className="pvo-modal" onClick={e => e.stopPropagation()}>
+          <Dialog className="pvo-modal" onClose={cancelCollabRemove}>
             <div className="pvo-modal-header">
               <AlertCircle size={24} className="pvo-warning-icon" />
               <h2>{isPending ? 'Cancel Invitation?' : 'Remove Collaborator?'}</h2>
@@ -692,28 +694,28 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
                 {isPending ? 'Cancel Invitation' : 'Remove from Project'}
               </button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Visibility Warning Modal */}
       {showVisibilityWarning && (
         <div className="pvo-modal-overlay" onClick={() => setShowVisibilityWarning(false)}>
-          <div className="pvo-modal" onClick={e => e.stopPropagation()}>
+          <Dialog className="pvo-modal" onClose={() => setShowVisibilityWarning(false)}>
             <div className="pvo-modal-header"><AlertCircle size={24} className="pvo-warning-icon" /><h2>Make Project Public?</h2></div>
             <p>This project is currently private. Making it public will allow anyone to see it.</p>
             <div className="pvo-modal-actions">
               <button onClick={() => setShowVisibilityWarning(false)} className="pvo-btn-cancel">Keep Private</button>
               <button onClick={confirmVisibilityChange} className="pvo-btn-confirm">Yes, Make Public</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Edit Project Modal */}
       {showEditProject && (
         <div className="pvo-modal-overlay" onClick={() => setShowEditProject(false)}>
-          <div className="pvo-modal pvo-modal-large" onClick={e => e.stopPropagation()}>
+          <Dialog className="pvo-modal pvo-modal-large" onClose={() => setShowEditProject(false)}>
             <div className="pvo-modal-header">
               <h2>Edit Project</h2>
               <button onClick={() => setShowEditProject(false)} className="pvo-modal-close"><X size={20} /></button>
@@ -728,41 +730,56 @@ export default function ProjectViewOne({ user, onNavigate, inline = false, onBac
                 <button type="button" onClick={handleSaveProject} className="pvo-btn-submit">Save Changes</button>
               </div>
             </form>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Delete Project Modal */}
       {showDeleteProject && (
         <div className="pvo-modal-overlay" onClick={() => setShowDeleteProject(false)}>
-          <div className="pvo-modal" onClick={e => e.stopPropagation()}>
+          <Dialog className="pvo-modal" onClose={() => setShowDeleteProject(false)}>
             <div className="pvo-modal-header"><AlertCircle size={24} className="pvo-error-icon" /><h2>Delete Project?</h2></div>
             <p>Are you sure you want to delete "{project.title}"? This action cannot be undone.</p>
             <div className="pvo-modal-actions">
               <button onClick={() => setShowDeleteProject(false)} className="pvo-btn-cancel">Cancel</button>
               <button onClick={handleDeleteProject} className="pvo-btn-delete">Delete Project</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Delete Task Modal */}
       {showDeleteTask && (
         <div className="pvo-modal-overlay" onClick={() => setShowDeleteTask(false)}>
-          <div className="pvo-modal" onClick={e => e.stopPropagation()}>
+          <Dialog className="pvo-modal" onClose={() => setShowDeleteTask(false)}>
             <div className="pvo-modal-header"><AlertCircle size={24} className="pvo-error-icon" /><h2>Delete Task?</h2></div>
             <p>Are you sure you want to delete this task? This action cannot be undone.</p>
             <div className="pvo-modal-actions">
               <button onClick={() => setShowDeleteTask(false)} className="pvo-btn-cancel">Cancel</button>
               <button onClick={handleDeleteTask} className="pvo-btn-delete">Delete Task</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
     </>
   );
 
   if (inline) return pageContent;
+
+  if (!canView) {
+    return (
+      <div className="project-view-one">
+        <PrimaryNav user={user} onNavigate={onNavigate} />
+        <div style={{ padding: '48px 16px', textAlign: 'center' }}>
+          <h2>Project not found</h2>
+          <p style={{ margin: '12px 0 20px', color: 'var(--text-muted)' }}>
+            This project doesn't exist or is private.
+          </p>
+          <button className="pvo-link" onClick={() => navigate('/projectview')}>Back to my projects</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="project-view-one">

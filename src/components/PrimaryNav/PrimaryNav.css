@@ -477,3 +477,33 @@
   max-width: 600px;
   width: 100%;
 }
+
+/* ===== Small screens ===== */
+@media (max-width: 720px) {
+  .primary-nav {
+    gap: 10px;
+    padding: 0 12px;
+  }
+  .nav-logo-text {
+    display: none;
+  }
+  .nav-logo-image {
+    width: 44px;
+    height: 44px;
+    margin-right: 0;
+  }
+  .nav-search {
+    min-width: 0;
+  }
+  .search-input::placeholder {
+    color: transparent;
+  }
+  .notif-popup,
+  .profile-menu {
+    position: fixed;
+    top: 64px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+}

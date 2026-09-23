@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Bell, BellOff } from 'lucide-react';
 import { useAppData } from '../../data/useAppData.js';
+import { notificationsFor, isNotificationRead } from '../../utils/notifications';
+import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import './Notifications.css';
 
 const TABS = ['All', 'Unread', 'Read'];
@@ -15,12 +17,11 @@ const TYPE_LABELS = {
   general: 'General',
 };
 
-export default function Notifications({ user }) {
+export default function Notifications({ user, onNavigate }) {
   const {
-    notifications: initialNotifications, updateNotifications,
+    notifications, setNotificationsRead,
     notificationsDisabled, disableNotifications, enableNotifications,
   } = useAppData();
-  const [notifications, setNotifications] = useState(initialNotifications);
   const [activeTab, setActiveTab] = useState('All');
 
   const isDisabled = (notificationsDisabled || []).includes(user?.email);
@@ -33,12 +34,9 @@ export default function Notifications({ user }) {
     }
   };
 
-  const relevantNotifications = notifications.filter((n) => {
-    // Filter by role or direct recipient
-    const matchesRole = n.role === 'multi' || n.role === user.role;
-    const matchesRecipient = !n.recipientEmail || n.recipientEmail === user.email;
-    return matchesRole && matchesRecipient;
-  });
+  // `read` here is this user's read state (broadcasts are tracked per user).
+  const relevantNotifications = notificationsFor(notifications, user)
+    .map((n) => ({ ...n, read: isNotificationRead(n, user) }));
 
   const visible = relevantNotifications.filter((n) => {
     if (activeTab === 'Unread') return !n.read;
@@ -49,22 +47,17 @@ export default function Notifications({ user }) {
   const unreadCount = relevantNotifications.filter((n) => !n.read).length;
 
   const toggleRead = (id) => {
-    const updatedNotifications = notifications.map((n) => (
-      n.id === id ? { ...n, read: !n.read } : n
-    ));
-    setNotifications(updatedNotifications);
-    updateNotifications(updatedNotifications);
+    const n = relevantNotifications.find((x) => x.id === id);
+    if (n) setNotificationsRead(id, user, !n.read);
   };
 
   const markAllRead = () => {
-    const updatedNotifications = notifications.map((n) => (
-      n.role === 'multi' || n.role === user.role ? { ...n, read: true } : n
-    ));
-    setNotifications(updatedNotifications);
-    updateNotifications(updatedNotifications);
+    setNotificationsRead(relevantNotifications.filter((n) => !n.read).map((n) => n.id), user, true);
   };
 
   return (
+    <>
+    <PrimaryNav user={user} onNavigate={onNavigate} />
     <div className="notifications-root">
       <section className="notifications-card">
         <div className="notifications-header">
@@ -142,5 +135,6 @@ export default function Notifications({ user }) {
         )}
       </section>
     </div>
+    </>
   );
 }

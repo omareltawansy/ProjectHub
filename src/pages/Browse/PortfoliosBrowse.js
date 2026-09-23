@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, User, Heart } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import { useAppData } from '../../data/useAppData';
+import { activatableProps } from '../../utils/a11y';
 import './PortfoliosBrowse.css';
 
 export default function PortfoliosBrowse({ user, onNavigate }) {
@@ -51,7 +52,7 @@ export default function PortfoliosBrowse({ user, onNavigate }) {
         ? a.name.localeCompare(b.name)
         : b.projectCount - a.projectCount
     );
-  }, [search, filterMajor, filterSkill, sortBy]);
+  }, [portfolios, search, filterMajor, filterSkill, sortBy]);
 
   const selected = selectedId ? portfolios.find(p => p.id === selectedId) : null;
 
@@ -126,7 +127,7 @@ export default function PortfoliosBrowse({ user, onNavigate }) {
                 <div
                   key={p.id}
                   className={`pfb-card${selectedId === p.id ? ' selected' : ''}`}
-                  onClick={() => setSelectedId(p.id)}
+                  {...activatableProps(() => setSelectedId(p.id), { selected: selectedId === p.id })}
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="pfb-card-top">

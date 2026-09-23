@@ -4,6 +4,8 @@ import { useAppData } from '../../data/useAppData';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { useToast } from '../../components/Toast/Toast';
+import { studentInternshipView } from '../../utils/internships';
+import { parseLooseDate, todayISO, formatDate } from '../../utils/time';
 import './Internships.css';
 
 const sortOptions = [
@@ -14,7 +16,12 @@ const sortOptions = [
 ];
 
 export default function Internships({ user, onNavigate }) {
-  const { internships: internshipSource, updateInternships } = useAppData();
+  const { internships: rawInternships, addApplicantToInternship, updateInternship } = useAppData();
+  // Students never see archived listings; status reflects *their* application.
+  const internshipSource = useMemo(
+    () => rawInternships.filter(i => !i.archived).map(i => studentInternshipView(i, user)),
+    [rawInternships, user]
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [sortBy, setSortBy] = useState('latest');
@@ -55,39 +62,44 @@ export default function Internships({ user, onNavigate }) {
         if (sortBy === 'company') return a.company.localeCompare(b.company);
         if (sortBy === 'status') return a.status.localeCompare(b.status);
         if (sortBy === 'deadline') {
-          if (a.deadline && b.deadline) return new Date(a.deadline + ' 2025') - new Date(b.deadline + ' 2025');
-          if (a.deadline) return -1;
-          if (b.deadline) return 1;
+          const da = parseLooseDate(a.deadline);
+          const db = parseLooseDate(b.deadline);
+          if (!Number.isNaN(da) && !Number.isNaN(db)) return da - db;
+          if (!Number.isNaN(da)) return -1;
+          if (!Number.isNaN(db)) return 1;
           return 0;
         }
-        return new Date(b.postedDate) - new Date(a.postedDate);
+        return (parseLooseDate(b.postedDate) || 0) - (parseLooseDate(a.postedDate) || 0);
       });
   }, [internshipData, searchTerm, statusFilter, sortBy]);
 
   const applyToInternship = (internship) => {
-    const updated = internshipData.map((item) =>
-      item.id === internship.id
-        ? { ...item, status: 'Applied', appliedDate: 'Today', interviewDate: undefined }
-        : item
-    );
-    setInternshipData(updated);
-    updateInternships(updated);
-    const next = { ...internship, status: 'Applied', appliedDate: 'Today', interviewDate: undefined };
-    if (selectedInternship?.id === internship.id) setSelectedInternship(next);
+    const appliedDate = todayISO();
+    addApplicantToInternship(internship.id, {
+      name: user.name,
+      email: user.email,
+      major: user.major || '',
+      status: 'Applied',
+      appliedDate,
+    });
+    if (selectedInternship?.id === internship.id) {
+      setSelectedInternship({ ...internship, status: 'Applied', appliedDate, interviewDate: undefined });
+    }
     setPendingApply(null);
     toast.success(`Application submitted to ${internship.company}!`);
   };
 
   const withdrawFromInternship = (internship) => {
-    const updated = internshipData.map((item) =>
-      item.id === internship.id
-        ? { ...item, status: 'Currently Hiring', appliedDate: undefined }
-        : item
-    );
-    setInternshipData(updated);
-    updateInternships(updated);
-    const next = { ...internship, status: 'Currently Hiring', appliedDate: undefined };
-    if (selectedInternship?.id === internship.id) setSelectedInternship(next);
+    const source = rawInternships.find(i => i.id === internship.id);
+    if (source) {
+      const email = user.email.toLowerCase();
+      updateInternship(internship.id, {
+        applicants: (source.applicants || []).filter(a => (a.email || '').toLowerCase() !== email),
+      });
+    }
+    if (selectedInternship?.id === internship.id) {
+      setSelectedInternship({ ...internship, status: internship.listingStatus, appliedDate: undefined, interviewDate: undefined });
+    }
     setPendingWithdraw(null);
     toast.info('Application withdrawn.');
   };
@@ -179,9 +191,9 @@ export default function Internships({ user, onNavigate }) {
                     </div>
 
                     <div className="internship-meta">
-                      {intern.deadline && <span className="internship-meta-item">Deadline: {intern.deadline}</span>}
-                      {intern.appliedDate && <span className="internship-meta-item">Applied: {intern.appliedDate}</span>}
-                      {intern.interviewDate && <span className="internship-meta-item">Interview: {intern.interviewDate}</span>}
+                      {intern.deadline && <span className="internship-meta-item">Deadline: {formatDate(intern.deadline)}</span>}
+                      {intern.appliedDate && <span className="internship-meta-item">Applied: {formatDate(intern.appliedDate)}</span>}
+                      {intern.interviewDate && <span className="internship-meta-item">Interview: {formatDate(intern.interviewDate)}</span>}
                     </div>
                   </button>
                 ))
@@ -206,7 +218,7 @@ export default function Internships({ user, onNavigate }) {
                     <div className="internship-panel-meta">
                       {selectedInternship.postedDate && <span>Posted: {selectedInternship.postedDate}</span>}
                       {selectedInternship.duration && <span>Duration: {selectedInternship.duration}</span>}
-                      {selectedInternship.deadline && <span>Deadline: {selectedInternship.deadline}</span>}
+                      {selectedInternship.deadline && <span>Deadline: {formatDate(selectedInternship.deadline)}</span>}
                     </div>
 
                     <p className="internship-panel-description">{selectedInternship.description}</p>
@@ -259,22 +271,24 @@ export default function Internships({ user, onNavigate }) {
 
       {pendingApply && (
         <ConfirmModal
+          open
+          variant="success"
           title="Apply for this internship?"
           message={`You are about to apply to ${pendingApply.title} at ${pendingApply.company}. This will submit your application immediately.`}
           confirmLabel="Yes, apply"
           onConfirm={() => applyToInternship(pendingApply)}
-          onCancel={() => setPendingApply(null)}
+          onClose={() => setPendingApply(null)}
         />
       )}
 
       {pendingWithdraw && (
         <ConfirmModal
+          open
           title="Withdraw your application?"
           message={`This will remove your application for ${pendingWithdraw.title} at ${pendingWithdraw.company}. You can re-apply later.`}
           confirmLabel="Yes, withdraw"
-          danger
           onConfirm={() => withdrawFromInternship(pendingWithdraw)}
-          onCancel={() => setPendingWithdraw(null)}
+          onClose={() => setPendingWithdraw(null)}
         />
       )}
     </>

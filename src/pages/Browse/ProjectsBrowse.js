@@ -3,6 +3,7 @@ import { Search, Star, ExternalLink, FolderKanban, Heart } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
 import { useAppData } from '../../data/useAppData';
 import { safeUrl } from '../../utils/safeUrl';
+import { activatableProps } from '../../utils/a11y';
 import './ProjectsBrowse.css';
 
 export default function ProjectsBrowse({ user, onNavigate }) {
@@ -48,7 +49,7 @@ export default function ProjectsBrowse({ user, onNavigate }) {
 
   // Recommended: public projects with highest rating or same tech stack as user's portfolio
   const userPortfolio = portfolios?.find(p => p.email === user?.email);
-  const userSkills = userPortfolio?.skills || [];
+  const userSkills = useMemo(() => userPortfolio?.skills || [], [userPortfolio]);
   const recommended = useMemo(() => {
     const scored = publicProjects.map(p => {
       let score = p.rating || 0;
@@ -83,7 +84,7 @@ export default function ProjectsBrowse({ user, onNavigate }) {
         ? (b.rating ?? 0) - (a.rating ?? 0)
         : parseDate(b.createdDate) - parseDate(a.createdDate)
     );
-  }, [search, filterCourse, filterInstructor, sortBy]);
+  }, [publicProjects, courses, search, filterCourse, filterInstructor, sortBy]);
 
   const selected = selectedId
     ? publicProjects.find(p => p.id === selectedId)
@@ -185,7 +186,7 @@ export default function ProjectsBrowse({ user, onNavigate }) {
                 <div
                   key={p.id}
                   className={`pbr-card${selectedId === p.id ? ' selected' : ''}`}
-                  onClick={() => setSelectedId(p.id)}
+                  {...activatableProps(() => setSelectedId(p.id), { selected: selectedId === p.id })}
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="pbr-card-top">

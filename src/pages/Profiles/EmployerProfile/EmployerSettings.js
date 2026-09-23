@@ -199,7 +199,7 @@ export default function EmployerSettings({ user, onClose }) {
 
           <div className="docs-list">
             {taxDocs.map((doc, index) => (
-              <div key={index} className="doc-item">
+              <div key={`${doc.name}-${doc.size ?? index}`} className="doc-item">
                 <div className="doc-info">
                   <span className="doc-name">{doc.name}</span>
                   <span className="doc-size">({(doc.size / 1024).toFixed(2)} KB)</span>

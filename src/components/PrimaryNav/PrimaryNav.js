@@ -5,6 +5,8 @@ import StudentSettings from '../../pages/Profiles/StudentProfile/StudentSettings
 import InstructorSettings from '../../pages/Profiles/InstructorProfile/InstructorSettings';
 import EmployerSettings from '../../pages/Profiles/EmployerProfile/EmployerSettings';
 import AdminSettings from '../../pages/Dashboards/AdminDashboard/AdminSettings';
+import { notificationsFor, isNotificationRead } from '../../utils/notifications';
+import Dialog from '../Dialog/Dialog';
 import './PrimaryNav.css';
 
 export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
@@ -27,6 +29,18 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
     }
     localStorage.setItem('darkMode', isDarkMode);
   }, [isDarkMode]);
+
+  // Escape closes whichever popup/modal is open.
+  useEffect(() => {
+    if (!showProfileMenu && !showNotifPopup) return;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      setShowProfileMenu(false);
+      setShowNotifPopup(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [showProfileMenu, showNotifPopup]);
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -72,11 +86,8 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
   };
 
   const notifDisabled = (notificationsDisabled || []).includes(user?.email);
-  const relevantNotifications = notifDisabled ? [] : initialNotifications.filter((n) => {
-    const matchesRole = n.role === 'multi' || n.role === user.role;
-    const matchesRecipient = !n.recipientEmail || n.recipientEmail === user.email;
-    return matchesRole && matchesRecipient;
-  });
+  const relevantNotifications = notifDisabled ? [] : notificationsFor(initialNotifications, user)
+    .map((n) => ({ ...n, read: isNotificationRead(n, user) }));
   const unreadNotificationsCount = relevantNotifications.filter((n) => !n.read).length;
 
   const initials = user?.name
@@ -89,8 +100,8 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
 
         <div className="nav-left">
           <a href="/" className="nav-logo">
-            <img src="/logo.png" alt="ProjectHub" className="nav-logo-image" />
-            ProjectHub
+            <img src="/logo.png" alt="" className="nav-logo-image" />
+            <span className="nav-logo-text">ProjectHub</span>
           </a>
         </div>
 
@@ -102,11 +113,12 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
+            aria-label="Search"
           />
         </form>
 
         <div className="nav-right">
-          <a href="/" className="nav-icon-btn" title="Home">
+          <a href="/" className="nav-icon-btn" title="Home" aria-label="Home">
             <Home size={18} />
           </a>
 
@@ -114,6 +126,8 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
             <button
               className="nav-icon-btn notif-btn"
               title="Notifications"
+              aria-label={`Notifications${unreadNotificationsCount ? ` (${unreadNotificationsCount} unread)` : ''}`}
+              aria-expanded={showNotifPopup}
               onClick={() => setShowNotifPopup((v) => !v)}
             >
               <Bell size={18} />
@@ -177,7 +191,12 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
           </div>
 
           <div className="nav-profile-wrapper">
-            <button className="nav-avatar-btn" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <button
+              className="nav-avatar-btn"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              aria-label="Account menu"
+              aria-expanded={showProfileMenu}
+            >
               <span>{initials}</span>
             </button>
 
@@ -227,7 +246,7 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
         return (
           <div className="settings-modal">
             <div className="settings-modal-overlay" onClick={() => setShowSettings(false)} />
-            <div className="settings-modal-content">
+            <Dialog className="settings-modal-content" aria-label="Settings" onClose={() => setShowSettings(false)}>
               {latestUser.role === 'student' && (
                 <StudentSettings user={latestUser} onClose={() => setShowSettings(false)} />
               )}
@@ -240,7 +259,7 @@ export default function PrimaryNav({ user, onNavigate, onSectionNavigate }) {
               {latestUser.role === 'admin' && (
                 <AdminSettings user={latestUser} onClose={() => setShowSettings(false)} />
               )}
-            </div>
+            </Dialog>
           </div>
         );
       })()}

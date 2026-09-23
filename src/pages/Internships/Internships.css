@@ -218,7 +218,8 @@
 }
 
 .internship-status-open,
-.internship-status-currently-hiring {
+.internship-status-currently-hiring,
+.internship-status-accepted {
   background: var(--success-light);
   color: var(--success);
   border-color: rgba(76, 175, 130, 0.4);
@@ -243,7 +244,8 @@
 }
 
 .internship-status-closed,
-.internship-status-position-filled {
+.internship-status-position-filled,
+.internship-status-rejected {
   background: var(--error-light);
   color: var(--error);
   border-color: rgba(224, 92, 92, 0.4);

@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppData } from '../../data/useAppData.js';
 import { Send, Plus, X } from 'lucide-react';
+import { nowStamp } from '../../utils/time';
+import { isSender, isRecipient, involvesUser } from '../../utils/messages';
+import PrimaryNav from '../../components/PrimaryNav/PrimaryNav';
+import Dialog from '../../components/Dialog/Dialog';
 import './Messages.css';
 
 const RECIPIENT_OPTIONS = [
@@ -29,18 +33,19 @@ function formatTime(timeStr) {
   }
 }
 
-export default function Messages({ user }) {
-  const { messages: initialMessages, updateMessages } = useAppData();
+export default function Messages({ user, onNavigate }) {
+  const { messages: initialMessages, updateMessages, users } = useAppData();
   const [messages, setMessages] = useState(initialMessages);
   const [selectedConvId, setSelectedConvId] = useState(null);
   const [draft, setDraft] = useState('');
   const [newChatOpen, setNewChatOpen] = useState(false);
-  const [newChat, setNewChat] = useState({ recipientRole: 'employer', text: '' });
+  const [newChat, setNewChat] = useState({ recipientRole: 'employer', recipientId: '', text: '' });
   const bottomRef = useRef(null);
 
-  const myMessages = messages.filter(
-    (m) => m.senderRole === user.role || m.recipientRole === user.role
-  );
+  // Keep local copy in sync with the shared store (e.g. messages sent from the floating widget).
+  useEffect(() => { setMessages(initialMessages); }, [initialMessages]);
+
+  const myMessages = messages.filter((m) => involvesUser(m, user));
 
   const conversationMap = {};
   myMessages.forEach((m) => {
@@ -53,11 +58,11 @@ export default function Messages({ user }) {
     const last = sorted[sorted.length - 1];
     const first = sorted[0];
 
-    const contact = first.senderRole === user.role
-      ? { name: first.recipient, role: first.recipientRole }
-      : { name: first.sender, role: first.senderRole };
+    const contact = isSender(first, user)
+      ? { name: first.recipient, role: first.recipientRole, email: first.recipientEmail }
+      : { name: first.sender, role: first.senderRole, email: first.senderEmail };
 
-    const unread = msgs.filter((m) => m.recipientRole === user.role && !m.read).length;
+    const unread = msgs.filter((m) => isRecipient(m, user) && !m.read).length;
 
     return { id: convId, contact, lastMessage: last.text, lastTime: last.time, unread, messages: sorted };
   }).sort((a, b) => b.lastTime.localeCompare(a.lastTime));
@@ -78,7 +83,7 @@ export default function Messages({ user }) {
   const openConversation = (convId) => {
     setSelectedConvId(convId);
     const updatedMessages = messages.map((m) =>
-      m.conversationId === convId && m.recipientRole === user.role ? { ...m, read: true } : m
+      m.conversationId === convId && isRecipient(m, user) ? { ...m, read: true } : m
     );
     setMessages(updatedMessages);
     updateMessages(updatedMessages);
@@ -92,10 +97,12 @@ export default function Messages({ user }) {
       conversationId: selectedConvId,
       sender: user.name,
       senderRole: user.role,
+      senderEmail: user.email,
       recipient: selectedConv.contact.name,
       recipientRole: selectedConv.contact.role,
+      recipientEmail: selectedConv.contact.email,
       text: draft.trim(),
-      time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      time: nowStamp(),
       read: false,
     };
     const updatedMessages = [...messages, newMsg];
@@ -104,36 +111,44 @@ export default function Messages({ user }) {
     setDraft('');
   };
 
+  const recipientChoices = (users || []).filter(
+    (u) => u.role === newChat.recipientRole && u.email !== user.email && u.active !== false
+  );
+
   const startNewChat = (e) => {
     e.preventDefault();
-    if (!newChat.text.trim()) return;
+    const recipient = recipientChoices.find((u) => String(u.id) === String(newChat.recipientId));
+    if (!newChat.text.trim() || !recipient) return;
     const convId = `new-${Date.now()}`;
-    const contactLabel = RECIPIENT_OPTIONS.find((o) => o.value === newChat.recipientRole)?.label || newChat.recipientRole;
     const newMsg = {
       id: Date.now(),
       conversationId: convId,
       sender: user.name,
       senderRole: user.role,
-      recipient: contactLabel,
-      recipientRole: newChat.recipientRole,
+      senderEmail: user.email,
+      recipient: recipient.name,
+      recipientRole: recipient.role,
+      recipientEmail: recipient.email,
       text: newChat.text.trim(),
-      time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      time: nowStamp(),
       read: false,
     };
     const updatedMessages = [...messages, newMsg];
     setMessages(updatedMessages);
     updateMessages(updatedMessages);
-    setNewChat({ recipientRole: 'employer', text: '' });
+    setNewChat({ recipientRole: 'employer', recipientId: '', text: '' });
     setNewChatOpen(false);
     setSelectedConvId(convId);
   };
 
   return (
+    <>
+    <PrimaryNav user={user} onNavigate={onNavigate} />
     <div className="dm-root">
       <aside className="dm-sidebar">
         <div className="dm-sidebar-header">
           <h2>Messages</h2>
-          <button className="dm-new-btn" onClick={() => setNewChatOpen(true)} title="New chat">
+          <button className="dm-new-btn" onClick={() => setNewChatOpen(true)} title="New chat" aria-label="New chat">
             <Plus size={18} />
           </button>
         </div>
@@ -180,7 +195,7 @@ export default function Messages({ user }) {
 
             <div className="dm-messages">
               {convMessages.map((m) => {
-                const isMine = m.senderRole === user.role;
+                const isMine = isSender(m, user);
                 return (
                   <div key={m.id} className={`dm-bubble-wrap${isMine ? ' mine' : ''}`}>
                     {!isMine && (
@@ -198,13 +213,14 @@ export default function Messages({ user }) {
 
             <form className="dm-input-bar" onSubmit={sendMessage}>
               <input
+                aria-label="Message"
                 className="dm-input"
                 placeholder={`Message ${selectedConv.contact.name}…`}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(e); }}
               />
-              <button type="submit" className="dm-send-btn" disabled={!draft.trim()}>
+              <button type="submit" className="dm-send-btn" disabled={!draft.trim()} aria-label="Send">
                 <Send size={16} />
               </button>
             </form>
@@ -218,10 +234,10 @@ export default function Messages({ user }) {
 
       {newChatOpen && (
         <div className="dm-modal-backdrop" onClick={() => setNewChatOpen(false)}>
-          <div className="dm-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="dm-modal" aria-labelledby="dm-new-title" onClose={() => setNewChatOpen(false)}>
             <div className="dm-modal-header">
-              <h3>New message</h3>
-              <button type="button" onClick={() => setNewChatOpen(false)}>
+              <h3 id="dm-new-title">New message</h3>
+              <button type="button" onClick={() => setNewChatOpen(false)} aria-label="Close">
                 <X size={18} />
               </button>
             </div>
@@ -230,10 +246,25 @@ export default function Messages({ user }) {
                 Send to
                 <select
                   value={newChat.recipientRole}
-                  onChange={(e) => setNewChat((prev) => ({ ...prev, recipientRole: e.target.value }))}
+                  onChange={(e) => setNewChat((prev) => ({ ...prev, recipientRole: e.target.value, recipientId: '' }))}
                 >
                   {RECIPIENT_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Recipient
+                <select
+                  value={newChat.recipientId}
+                  onChange={(e) => setNewChat((prev) => ({ ...prev, recipientId: e.target.value }))}
+                  required
+                >
+                  <option value="">
+                    {recipientChoices.length ? 'Choose a person…' : 'No one available in this role'}
+                  </option>
+                  {recipientChoices.map((u) => (
+                    <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
               </label>
@@ -247,13 +278,14 @@ export default function Messages({ user }) {
                 />
               </label>
               <div className="dm-modal-actions">
-                <button type="submit" className="dm-send-primary">Send</button>
+                <button type="submit" className="dm-send-primary" disabled={!newChat.recipientId || !newChat.text.trim()}>Send</button>
                 <button type="button" onClick={() => setNewChatOpen(false)}>Cancel</button>
               </div>
             </form>
-          </div>
+          </Dialog>
         </div>
       )}
     </div>
+    </>
   );
 }

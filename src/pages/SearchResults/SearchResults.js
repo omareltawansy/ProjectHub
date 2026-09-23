@@ -57,7 +57,7 @@ export default function SearchResults({ user, onNavigate, initialQuery = '' }) {
     }
 
     return results;
-  }, [searchQuery, selectedMajors, selectedSkills, sortBy]);
+  }, [portfolios, searchQuery, selectedMajors, selectedSkills, sortBy]);
 
   const filteredProjects = projects.filter(project =>
     project.title.toLowerCase().includes(searchQuery.toLowerCase())

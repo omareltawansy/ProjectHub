@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useToast } from '../../../components/Toast/Toast';
+import { useAppData } from '../../../data/useAppData';
+import { resizeImageFile } from '../../../utils/image';
 import './InstructorSettings.css';
 
 export default function InstructorSettings({ user, onClose }) {
   const toast = useToast();
+  const { updateUser } = useAppData();
   const [formData, setFormData] = useState({
     profileInfo: user.profileInfo || '',
     profilePicture: user.profilePicture || '',
@@ -25,29 +28,27 @@ export default function InstructorSettings({ user, onClose }) {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImagePreview(reader.result);
-        setFormData(prev => ({
-          ...prev,
-          profilePicture: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageFile(file);
+      setProfileImagePreview(dataUrl);
+      setFormData(prev => ({ ...prev, profilePicture: dataUrl }));
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   const handleAddCourse = () => {
-    if (newCourse.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        linkedCourses: [...prev.linkedCourses, newCourse]
-      }));
-      setNewCourse('');
-    }
+    const course = newCourse.trim();
+    if (!course) return;
+    setFormData(prev => (
+      prev.linkedCourses.some(c => c.toLowerCase() === course.toLowerCase())
+        ? prev
+        : { ...prev, linkedCourses: [...prev.linkedCourses, course] }
+    ));
+    setNewCourse('');
   };
 
   const handleRemoveCourse = (index) => {
@@ -59,6 +60,7 @@ export default function InstructorSettings({ user, onClose }) {
 
   const handleSave = () => {
     const updatedUser = { ...user, ...formData };
+    updateUser(user.id, formData);
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     toast.success('Settings saved successfully!');
     onClose();
@@ -169,7 +171,7 @@ export default function InstructorSettings({ user, onClose }) {
 
           <div className="courses-list">
             {formData.linkedCourses.map((course, index) => (
-              <div key={index} className="course-badge">
+              <div key={course} className="course-badge">
                 <span>{course}</span>
                 <button
                   type="button"

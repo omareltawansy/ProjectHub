@@ -19,11 +19,11 @@ export default function PortfoliosSection() {
   /* ── Derived filter lists ── */
   const majors = useMemo(
     () => [...new Set(initialPortfolios.map(p => p.major))].sort(),
-    []
+    [initialPortfolios]
   );
   const skills = useMemo(
     () => [...new Set(initialPortfolios.flatMap(p => p.skills))].sort(),
-    []
+    [initialPortfolios]
   );
 
   /* ── Filtered + sorted portfolios ── */
@@ -47,7 +47,7 @@ export default function PortfoliosSection() {
           ? b.projectCount - a.projectCount
           : a.name.localeCompare(b.name)
       );
-  }, [search, majorFilter, skillFilter, sortBy]);
+  }, [initialPortfolios, search, majorFilter, skillFilter, sortBy]);
 
   const toggle = (id) => setExpandedId(prev => (prev === id ? null : id));
 

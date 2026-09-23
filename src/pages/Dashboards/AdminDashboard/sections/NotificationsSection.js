@@ -2,6 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { Megaphone, X, Filter } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
 import { useToast } from '../../../../components/Toast/Toast.js';
+import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal';
+import { notificationsFor, isNotificationRead } from '../../../../utils/notifications';
+import Dialog from '../../../../components/Dialog/Dialog';
 import './NotificationsSection.css';
 
 const TABS = ['All', 'Unread', 'Read'];
@@ -39,19 +42,17 @@ const nowStamp = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-let nextNotifId = 100000;
-
-export default function NotificationsSection() {
-  const { notifications: initialNotifications, updateNotifications } = useAppData();
-  const [notifications, setNotifications] = useState(initialNotifications);
+export default function NotificationsSection({ user }) {
+  const { notifications, updateNotifications, setNotificationsRead } = useAppData();
   const [activeTab, setActiveTab] = useState('All');
   const [typeFilter, setTypeFilter] = useState('all');
   const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [pendingBroadcast, setPendingBroadcast] = useState(null);
   const toast = useToast();
 
   const adminNotifications = useMemo(
-    () => notifications.filter(n => n.role === 'admin' || n.role === 'multi'),
-    [notifications]
+    () => notificationsFor(notifications, user).map(n => ({ ...n, read: isNotificationRead(n, user) })),
+    [notifications, user]
   );
 
   const unreadCount = adminNotifications.filter(n => !n.read).length;
@@ -66,15 +67,12 @@ export default function NotificationsSection() {
   }, [adminNotifications, activeTab, typeFilter]);
 
   const toggleRead = (id) => {
-    const updatedNotifications = notifications.map(n => n.id === id ? { ...n, read: !n.read } : n);
-    setNotifications(updatedNotifications);
-    updateNotifications(updatedNotifications);
+    const n = adminNotifications.find(x => x.id === id);
+    if (n) setNotificationsRead(id, user, !n.read);
   };
 
   const markAllRead = () => {
-    const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
-    setNotifications(updatedNotifications);
-    updateNotifications(updatedNotifications);
+    setNotificationsRead(adminNotifications.filter(n => !n.read).map(n => n.id), user, true);
     toast.success('All notifications marked as read.');
   };
 
@@ -87,23 +85,27 @@ export default function NotificationsSection() {
       setError('Message must be 300 characters or fewer.');
       return;
     }
-    if (role === 'multi' && !window.confirm('Send this notification to all roles?')) {
+    if (role === 'multi') {
+      setPendingBroadcast({ role, type, message });
       return;
     }
-    nextNotifId += 1;
+    publishBroadcast({ role, type, message });
+  };
+
+  const publishBroadcast = ({ role, type, message }) => {
     const newNotif = {
-      id: nextNotifId,
+      id: Math.max(0, ...notifications.map(n => Number(n.id) || 0)) + 1,
       type,
       role,
       message: message.trim(),
       time: nowStamp(),
       read: false,
+      readBy: [], // broadcasts track read state per user
     };
-    const updatedNotifications = [newNotif, ...notifications];
-    setNotifications(updatedNotifications);
-    updateNotifications(updatedNotifications);
+    updateNotifications([newNotif, ...notifications]);
     toast.success(`Notification sent to ${BROADCAST_ROLES.find(r => r.value === role)?.label || role}.`);
     setBroadcastOpen(false);
+    setPendingBroadcast(null);
   };
 
   return (
@@ -205,6 +207,16 @@ export default function NotificationsSection() {
           onSubmit={sendBroadcast}
         />
       )}
+
+      <ConfirmModal
+        open={!!pendingBroadcast}
+        variant="success"
+        title="Send to all roles?"
+        message="This notification will go to every student, instructor, employer and admin."
+        confirmLabel="Send to everyone"
+        onConfirm={() => publishBroadcast(pendingBroadcast)}
+        onClose={() => setPendingBroadcast(null)}
+      />
     </div>
   );
 }
@@ -229,7 +241,7 @@ function BroadcastModal({ onClose, onSubmit }) {
 
   return (
     <div className="ns-modal-backdrop" onClick={onClose}>
-      <div className="ns-modal" onClick={(e) => e.stopPropagation()}>
+      <Dialog className="ns-modal" onClose={onClose}>
         <header className="ns-modal-header">
           <div className="ns-modal-title">
             <Megaphone size={18} />
@@ -276,7 +288,7 @@ function BroadcastModal({ onClose, onSubmit }) {
             </button>
           </div>
         </form>
-      </div>
+      </Dialog>
     </div>
   );
 }

@@ -1,10 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MessageSquare, X, Send, List, ArrowLeft } from 'lucide-react';
 import { useAppData } from '../../data/useAppData.js';
+import { nowStamp } from '../../utils/time';
+import { isSender, isRecipient, involvesUser } from '../../utils/messages';
 import './FloatingMessages.css';
 
 export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages, currentUser }) {
-  const { messages: initialMessages, addMessage } = useAppData();
+  const { messages: allMessages, addMessage, users } = useAppData();
+  const initialMessages = useMemo(
+    () => allMessages.filter((m) => involvesUser(m, currentUser)),
+    [allMessages, currentUser]
+  );
   const [messages, setMessages] = useState(initialMessages);
 
   // Keep local copy in sync with the global store (other components can add messages too)
@@ -20,17 +26,13 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
   const senderName = currentUser?.name || 'User';
   const senderRole = currentUser?.role || 'student';
 
-  const contacts = useMemo(() => {
-    const seen = new Set();
-    const list = [];
-    messages.forEach((msg) => {
-      if (!seen.has(msg.sender)) { seen.add(msg.sender); list.push(msg.sender); }
-      if (!seen.has(msg.recipient)) { seen.add(msg.recipient); list.push(msg.recipient); }
-    });
-    return list.filter((name) => name !== senderName);
-  }, [messages, senderName]);
+  // Anyone active on the platform other than yourself, addressed by email.
+  const contacts = useMemo(
+    () => (users || []).filter((u) => u.email !== currentUser?.email && u.active !== false),
+    [users, currentUser]
+  );
 
-  const unreadCount = messages.filter((m) => !m.read && m.recipientRole === senderRole).length;
+  const unreadCount = messages.filter((m) => !m.read && isRecipient(m, currentUser)).length;
 
   const conversations = useMemo(() => {
     const map = new Map();
@@ -42,14 +44,19 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
       .map(([id, items]) => {
         const sorted = [...items].sort((a, b) => a.time.localeCompare(b.time));
         const latest = sorted[sorted.length - 1];
-        const myTouch = sorted.find((m) => m.senderRole === senderRole);
-        const title = myTouch
-          ? (myTouch.senderRole === senderRole ? myTouch.recipient : myTouch.sender)
-          : latest.sender;
+        const title = isSender(sorted[0], currentUser) ? sorted[0].recipient : sorted[0].sender;
         return { id, title, latest, messages: sorted };
       })
       .sort((a, b) => b.latest.time.localeCompare(a.latest.time));
-  }, [messages, senderRole]);
+  }, [messages, currentUser]);
+
+  // Escape closes the panel (it's a popup, not a modal, so no focus trap).
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') onToggle(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onToggle]);
 
   const activeConversation = conversations.find((c) => c.id === activeConversationId) || null;
 
@@ -58,15 +65,18 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
     const body = quickMessage.trim();
     if (!body || !recipient) return;
 
-    const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const to = contacts.find((u) => u.email === recipient);
+    if (!to) return;
     const newMessage = {
       conversationId: `quick-${Date.now()}`,
       sender: senderName,
       senderRole,
-      recipient,
-      recipientRole: 'multi',
+      senderEmail: currentUser?.email,
+      recipient: to.name,
+      recipientRole: to.role,
+      recipientEmail: to.email,
       text: body,
-      time: now,
+      time: nowStamp(),
       read: false,
     };
 
@@ -78,16 +88,17 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
     e.preventDefault();
     if (!chatDraft.trim() || !activeConversation) return;
     const latest = activeConversation.messages[activeConversation.messages.length - 1];
-    const recipientName = latest.senderRole === senderRole ? latest.recipient : latest.sender;
-    const recipientRole = latest.senderRole === senderRole ? latest.recipientRole : latest.senderRole;
+    const mine = isSender(latest, currentUser);
     const newMessage = {
       conversationId: activeConversation.id,
       sender: senderName,
       senderRole,
-      recipient: recipientName,
-      recipientRole,
+      senderEmail: currentUser?.email,
+      recipient: mine ? latest.recipient : latest.sender,
+      recipientRole: mine ? latest.recipientRole : latest.senderRole,
+      recipientEmail: mine ? latest.recipientEmail : latest.senderEmail,
       text: chatDraft.trim(),
-      time: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      time: nowStamp(),
       read: false,
     };
     addMessage(newMessage);
@@ -101,7 +112,8 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
         className="fm-floating-button"
         onClick={() => onToggle(!isOpen)}
         title="Messages"
-        aria-label="Open messages"
+        aria-label={isOpen ? 'Close messages' : 'Open messages'}
+        aria-expanded={isOpen}
       >
         <MessageSquare size={20} />
         {unreadCount > 0 && <span className="fm-badge">{unreadCount}</span>}
@@ -109,7 +121,7 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
 
       {/* Floating Panel */}
       {isOpen && (
-        <div className="fm-panel">
+        <div className="fm-panel" role="region" aria-label="Messages">
           <div className="fm-header">
             <h3>Messages</h3>
             <button
@@ -150,8 +162,8 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
                   onChange={(e) => setRecipient(e.target.value)}
                 >
                   <option value="">Choose recipient</option>
-                  {contacts.map((name) => (
-                    <option key={name} value={name}>{name}</option>
+                  {contacts.map((u) => (
+                    <option key={u.email} value={u.email}>{u.name} ({u.role})</option>
                   ))}
                 </select>
                 <label htmlFor="fm-quick-msg" className="fm-label">Message</label>
@@ -219,7 +231,7 @@ export default function FloatingMessages({ isOpen, onToggle, onOpenFullMessages,
                         </button>
                         <ul className="fm-messages">
                           {activeConversation.messages.map((msg) => (
-                            <li key={msg.id} className={`fm-message ${msg.senderRole === senderRole ? 'mine' : ''}`}>
+                            <li key={msg.id} className={`fm-message ${isSender(msg, currentUser) ? 'mine' : ''}`}>
                               <div className="fm-msg-header">
                                 <strong className="fm-msg-from">{msg.sender}</strong>
                                 <span className="fm-msg-time">{msg.time}</span>

@@ -480,5 +480,14 @@
 @media (max-width: 700px) {
   .dm-root {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  /* Stacked layout: keep the conversation list short so the chat stays usable. */
+  .dm-sidebar {
+    max-height: 35vh;
+    overflow-y: auto;
+  }
+  .dm-main {
+    min-height: 0;
   }
 }

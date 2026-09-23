@@ -53,6 +53,8 @@ export default function EmployerInternships({ user, onNavigate }) {
   useEffect(() => {
     setInternshipData(employerInternships);
     setSelectedInternship(employerInternships[0] || null);
+  // Intentionally only on user change: resyncing on every data change would reset the selection.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.id]);
 
   const goBack = () => {

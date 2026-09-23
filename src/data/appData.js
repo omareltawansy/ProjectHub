@@ -97,7 +97,10 @@ export const appData = {
       flagReason: null,
       appeal: null,
       rating: 4.5,
-      comments: [],
+      comments: [
+        { id: 1, author: 'Dr. Fatima Ahmed', date: '2025-05-02', rating: 4.0, text: 'Overall solid project. The architecture is clean but the authentication flow needs improvement before submission.' },
+        { id: 2, author: 'Dr. Fatima Ahmed', date: '2025-05-04', taskTitle: 'Fix login bug', text: 'This needs to be resolved urgently. The JWT token expiry is not handled correctly.' },
+      ],
       visibility: 'public',
       techStack: ['React', 'Node.js', 'MongoDB'],
       githubLink: 'https://github.com/ahmed-hassan/ecommerce',
@@ -244,6 +247,33 @@ export const appData = {
       demoVideo: null,
       collaborators: [
         { id: 1, name: 'Omar Khalil', email: 'student3@guc.edu.eg', initials: 'OK', status: 'Accepted', role: 'Owner' },
+      ],
+    },
+    {
+      id: 8,
+      title: 'Smart Campus Navigation',
+      studentName: 'Ahmed Hassan',
+      studentEmail: 'student1@guc.edu.eg',
+      course: 'Bachelor',
+      createdAt: '2025-01-05',
+      status: 'Active',
+      flagged: false,
+      flagReason: null,
+      appeal: null,
+      rating: null,
+      comments: [],
+      visibility: 'private',
+      techStack: ['React Native', 'Python'],
+      githubLink: null,
+      reportLink: null,
+      demoVideo: null,
+      thesis: [
+        { id: 1, title: 'thesis_v3_final.pdf', uploadDate: '2025-02-12', size: '4.2 MB', isFinal: true },
+        { id: 2, title: 'thesis_v2.pdf', uploadDate: '2025-01-28', size: '3.8 MB', isFinal: false },
+        { id: 3, title: 'thesis_v1.pdf', uploadDate: '2025-01-10', size: '3.1 MB', isFinal: false },
+      ],
+      collaborators: [
+        { id: 1, name: 'Ahmed Hassan', email: 'student1@guc.edu.eg', initials: 'AH', status: 'Accepted', role: 'Owner' },
       ],
     },
   ],
@@ -1120,8 +1150,32 @@ export const appData = {
     'Bootstrap',
   ],
 
-  // Cross-user project invitations — persisted so invitee sees them after login
-  projectInvitations: [],
+  // Cross-user project invitations — persisted so invitee sees them after login.
+  // Student → student invitations add a collaborator; student → instructor
+  // invitations (kind: 'supervision') ask an instructor to supervise the project.
+  projectInvitations: [
+    {
+      id: 1, kind: 'supervision', status: 'pending',
+      projectId: 1, projectTitle: 'E-Commerce Platform', course: 'Web Development',
+      fromUserName: 'Ahmed Hassan', fromUserEmail: 'student1@guc.edu.eg',
+      toUserName: 'Dr. Fatima Ahmed', toUserEmail: 'instructor1@guc.edu.eg',
+      date: '2025-05-01',
+    },
+    {
+      id: 2, kind: 'supervision', status: 'pending',
+      projectId: 2, projectTitle: 'Image Classification CNN', course: 'Machine Learning',
+      fromUserName: 'Sara Nour', fromUserEmail: 'student2@guc.edu.eg',
+      toUserName: 'Dr. Fatima Ahmed', toUserEmail: 'instructor1@guc.edu.eg',
+      date: '2025-05-03',
+    },
+    {
+      id: 3, kind: 'supervision', status: 'pending',
+      projectId: 3, projectTitle: 'Real-Time Chat App', course: 'Web Development',
+      fromUserName: 'Omar Khalil', fromUserEmail: 'student3@guc.edu.eg',
+      toUserName: 'Dr. Karim Sayed', toUserEmail: 'instructor2@guc.edu.eg',
+      date: '2025-05-08',
+    },
+  ],
 
   // favorites: array of { userEmail, type: 'project'|'portfolio', itemId }
   favorites: [],

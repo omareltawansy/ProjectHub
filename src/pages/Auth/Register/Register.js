@@ -29,10 +29,27 @@ export default function Register({ navigateTo }) {
         setError('');
         setLoading(true);
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailTaken = (addr) => [
+            ...users.map(u => u.email),
+            ...employers.map(e => e.email),
+        ].some(existing => (existing || '').toLowerCase() === addr);
+
         if (userType === 'student') {
-            const { firstName, lastName, email, password, confirmPassword } = studentData;
-            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            const { firstName, lastName, password, confirmPassword } = studentData;
+            const email = studentData.email.trim().toLowerCase();
+            if (!firstName.trim() || !lastName.trim() || !email || !password || !confirmPassword) {
                 setError('Please fill in all fields.');
+                setLoading(false);
+                return;
+            }
+            if (!emailRegex.test(email)) {
+                setError('Please enter a valid email address.');
+                setLoading(false);
+                return;
+            }
+            if (password.length < 6) {
+                setError('Password must be at least 6 characters long.');
                 setLoading(false);
                 return;
             }
@@ -41,21 +58,33 @@ export default function Register({ navigateTo }) {
                 setLoading(false);
                 return;
             }
-            if (users.some(u => u.email === email)) {
+            if (emailTaken(email)) {
                 setError('An account with this email already exists.');
                 setLoading(false);
                 return;
             }
             setTimeout(() => {
-                addUser({ name: `${firstName} ${lastName}`, email, password, role: 'student' });
+                addUser({ name: `${firstName.trim()} ${lastName.trim()}`, email, password, role: 'student' });
                 setLoading(false);
                 setSuccess(true);
             }, 800);
 
         } else if (userType === 'employer') {
-            const { companyName, companyEmail, contactName, password, confirmPassword } = employerData;
+            const { contactName, password, confirmPassword } = employerData;
+            const companyName = employerData.companyName.trim();
+            const companyEmail = employerData.companyEmail.trim().toLowerCase();
             if (!companyName || !companyEmail || !password || !confirmPassword) {
-                setError('Please fill in all fields.');
+                setError('Please fill in all required fields.');
+                setLoading(false);
+                return;
+            }
+            if (!emailRegex.test(companyEmail)) {
+                setError('Please enter a valid email address.');
+                setLoading(false);
+                return;
+            }
+            if (password.length < 6) {
+                setError('Password must be at least 6 characters long.');
                 setLoading(false);
                 return;
             }
@@ -64,11 +93,7 @@ export default function Register({ navigateTo }) {
                 setLoading(false);
                 return;
             }
-            const allEmails = [
-                ...users.map(u => u.email),
-                ...employers.map(e => e.email),
-            ];
-            if (allEmails.includes(companyEmail)) {
+            if (emailTaken(companyEmail)) {
                 setError('An account with this email already exists.');
                 setLoading(false);
                 return;
@@ -140,13 +165,14 @@ export default function Register({ navigateTo }) {
                         <p>Create your account</p>
                     </div>
 
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <div className="error-message" role="alert">{error}</div>}
 
                     <div className="user-type-selector">
                         <select
                             value={userType}
                             onChange={(e) => setUserType(e.target.value)}
                             className="user-type-dropdown"
+                            aria-label="Account type"
                             disabled={loading}
                         >
                             {!userType && <option value="">Select account type</option>}
@@ -161,32 +187,32 @@ export default function Register({ navigateTo }) {
                                 <>
                                     <div className="form-row">
                                         <div className="form-group">
-                                            <input type="text" className="form-input" placeholder="First Name"
+                                            <input type="text" className="form-input" placeholder="First Name" aria-label="First name"
                                                 value={studentData.firstName}
                                                 onChange={(e) => handleStudentChange('firstName', e.target.value)}
                                                 disabled={loading} />
                                         </div>
                                         <div className="form-group">
-                                            <input type="text" className="form-input" placeholder="Last Name"
+                                            <input type="text" className="form-input" placeholder="Last Name" aria-label="Last name"
                                                 value={studentData.lastName}
                                                 onChange={(e) => handleStudentChange('lastName', e.target.value)}
                                                 disabled={loading} />
                                         </div>
                                     </div>
                                     <div className="form-group">
-                                        <input type="email" className="form-input" placeholder="Email Address"
+                                        <input type="email" autoComplete="email" className="form-input" placeholder="Email Address" aria-label="Email address"
                                             value={studentData.email}
                                             onChange={(e) => handleStudentChange('email', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="password" className="form-input" placeholder="Password"
+                                        <input type="password" className="form-input" placeholder="Password (min. 6 characters)" aria-label="Password"
                                             value={studentData.password}
                                             onChange={(e) => handleStudentChange('password', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="password" className="form-input" placeholder="Confirm Password"
+                                        <input type="password" className="form-input" placeholder="Confirm Password" aria-label="Confirm password"
                                             value={studentData.confirmPassword}
                                             onChange={(e) => handleStudentChange('confirmPassword', e.target.value)}
                                             disabled={loading} />
@@ -197,31 +223,31 @@ export default function Register({ navigateTo }) {
                             {userType === 'employer' && (
                                 <>
                                     <div className="form-group">
-                                        <input type="text" className="form-input" placeholder="Company Name"
+                                        <input type="text" className="form-input" placeholder="Company Name" aria-label="Company name"
                                             value={employerData.companyName}
                                             onChange={(e) => handleEmployerChange('companyName', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="text" className="form-input" placeholder="Contact Person Name"
+                                        <input type="text" className="form-input" placeholder="Contact Person Name (optional)" aria-label="Contact person name"
                                             value={employerData.contactName}
                                             onChange={(e) => handleEmployerChange('contactName', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="email" className="form-input" placeholder="Company Email"
+                                        <input type="email" autoComplete="email" className="form-input" placeholder="Company Email" aria-label="Company email"
                                             value={employerData.companyEmail}
                                             onChange={(e) => handleEmployerChange('companyEmail', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="password" className="form-input" placeholder="Password"
+                                        <input type="password" className="form-input" placeholder="Password (min. 6 characters)" aria-label="Password"
                                             value={employerData.password}
                                             onChange={(e) => handleEmployerChange('password', e.target.value)}
                                             disabled={loading} />
                                     </div>
                                     <div className="form-group">
-                                        <input type="password" className="form-input" placeholder="Confirm Password"
+                                        <input type="password" className="form-input" placeholder="Confirm Password" aria-label="Confirm password"
                                             value={employerData.confirmPassword}
                                             onChange={(e) => handleEmployerChange('confirmPassword', e.target.value)}
                                             disabled={loading} />

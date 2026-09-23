@@ -31,7 +31,7 @@ export default function CoursesSection() {
 
   const allInstructors = useMemo(
     () => users.filter(u => u.role === 'instructor').map(u => ({ id: u.id, name: u.name })),
-    []
+    [users]
   );
 
   const visibleCourses = useMemo(() => {

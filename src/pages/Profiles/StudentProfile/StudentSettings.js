@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useToast } from '../../../components/Toast/Toast';
+import { useAppData } from '../../../data/useAppData';
+import { resizeImageFile } from '../../../utils/image';
 import './StudentSettings.css';
 
 export default function StudentSettings({ user, onClose }) {
   const toast = useToast();
+  const { updateUser } = useAppData();
   const [formData, setFormData] = useState({
     portfolioInfo: user.portfolioInfo || '',
     profilePicture: user.profilePicture || '',
@@ -24,29 +27,27 @@ export default function StudentSettings({ user, onClose }) {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImagePreview(reader.result);
-        setFormData(prev => ({
-          ...prev,
-          profilePicture: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageFile(file);
+      setProfileImagePreview(dataUrl);
+      setFormData(prev => ({ ...prev, profilePicture: dataUrl }));
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   const handleAddSkill = () => {
-    if (newSkill.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, newSkill]
-      }));
-      setNewSkill('');
-    }
+    const skill = newSkill.trim();
+    if (!skill) return;
+    setFormData(prev => (
+      prev.skills.some(s => s.toLowerCase() === skill.toLowerCase())
+        ? prev
+        : { ...prev, skills: [...prev.skills, skill] }
+    ));
+    setNewSkill('');
   };
 
   const handleRemoveSkill = (index) => {
@@ -58,6 +59,7 @@ export default function StudentSettings({ user, onClose }) {
 
   const handleSave = () => {
     const updatedUser = { ...user, ...formData };
+    updateUser(user.id, formData);
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     toast.success('Settings saved successfully!');
     onClose();
@@ -140,7 +142,7 @@ export default function StudentSettings({ user, onClose }) {
 
           <div className="skills-list">
             {formData.skills.map((skill, index) => (
-              <div key={index} className="skill-badge">
+              <div key={skill} className="skill-badge">
                 <span>{skill}</span>
                 <button
                   type="button"

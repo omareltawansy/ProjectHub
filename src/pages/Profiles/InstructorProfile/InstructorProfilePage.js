@@ -10,7 +10,7 @@ export default function InstructorProfilePage({ user, onNavigate }) {
   const { userId } = useParams();
   const { users, courses, projects } = useAppData();
 
-  if (!user) { window.location.href = '/login'; return null; }
+  if (!user) return null; // App.js route guards handle the redirect
 
   const instructor = users.find(u => String(u.id) === String(userId) && u.role === 'instructor');
 

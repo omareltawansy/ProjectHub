@@ -4,7 +4,7 @@ import { useAppData } from '../../../data/useAppData';
 import './Login.css';
 
 export default function Login({ navigateTo }) {
-    const { users } = useAppData();
+    const { users, employers } = useAppData();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -31,27 +31,48 @@ export default function Login({ navigateTo }) {
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!emailRegex.test(email.trim())) {
             setError('Please enter a valid email address.');
             setLoading(false);
             return;
         }
-        setTimeout(() => {
-            const foundUser = users.find(
-                (user) => user.email === email && user.password === password
-            );
+        const normalizedEmail = email.trim().toLowerCase();
+        const foundUser = users.find(
+            (user) => (user.email || '').toLowerCase() === normalizedEmail && user.password === password
+        );
 
-            if (!foundUser) {
-                setError('Invalid email or password. Please try again.');
+        if (!foundUser) {
+            setError('Invalid email or password. Please try again.');
+            setLoading(false);
+            return;
+        }
+
+        if (foundUser.active === false) {
+            setError('This account has been deactivated. Please contact an administrator.');
+            setLoading(false);
+            return;
+        }
+
+        if (foundUser.role === 'employer') {
+            const employerRecord = (employers || []).find(
+                (e) => (e.email || '').toLowerCase() === normalizedEmail
+            );
+            if (employerRecord?.status === 'pending') {
+                setError('Your employer account is still pending admin approval.');
                 setLoading(false);
                 return;
             }
+            if (employerRecord?.status === 'rejected') {
+                setError('Your employer registration was not approved. Please contact an administrator.');
+                setLoading(false);
+                return;
+            }
+        }
 
-            // Login successful
-            const { password: _password, ...safeUser } = foundUser;
-            localStorage.setItem('currentUser', JSON.stringify(safeUser));
-            window.location.href = `/${foundUser.role}-dashboard`;
-        }, 1500);
+        // Login successful
+        const { password: _password, ...safeUser } = foundUser;
+        localStorage.setItem('currentUser', JSON.stringify(safeUser));
+        window.location.href = `/${foundUser.role}-dashboard`;
     };
 
     return (
@@ -64,17 +85,17 @@ export default function Login({ navigateTo }) {
                         <p>Welcome back! Please login to your account.</p>
                     </div>
 
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <div className="error-message" role="alert">{error}</div>}
 
                     <form onSubmit={handleLogin}>
                         <div className="form-group">
                             <input
-                                type="email"
+                                type="email" autoComplete="email"
                                 id="email"
                                 className="form-input"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="example123@domain.com"
+                                placeholder="example123@domain.com" aria-label="Email"
                                 disabled={loading}
                             />
                         </div>
@@ -87,7 +108,7 @@ export default function Login({ navigateTo }) {
                                     className="form-input"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Please enter your password"
+                                    placeholder="Please enter your password" aria-label="Password"
                                     disabled={loading}
                                 />
                                 <button

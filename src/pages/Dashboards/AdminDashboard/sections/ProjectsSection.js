@@ -7,6 +7,7 @@ import { useAppData } from '../../../../data/useAppData.js';
 import { safeUrl } from '../../../../utils/safeUrl.js';
 import { useToast } from '../../../../components/Toast/Toast.js';
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal.js';
+import { nowStamp } from '../../../../utils/time';
 import './ProjectsSection.css';
 
 const TABS = ['All projects', 'Flagged', 'Pending appeals'];
@@ -109,7 +110,7 @@ export default function ProjectsSection() {
         role: 'student',
         recipientEmail: project.studentEmail,
         message: `Your project "${project.title}" has been flagged by an admin. Reason: "${flagReason.trim()}". You can submit an appeal from your project page.`,
-        time: 'Just now',
+        time: nowStamp(),
         read: false,
       });
     }

@@ -21,6 +21,7 @@ import ProjectsBrowse from './pages/Browse/ProjectsBrowse';
 import PortfoliosBrowse from './pages/Browse/PortfoliosBrowse';
 import EmployerPublicProfile from './pages/Profiles/EmployerProfile/EmployerPublicProfile';
 import InstructorProfilePage from './pages/Profiles/InstructorProfile/InstructorProfilePage';
+import { useAppData } from './data/useAppData';
 import './styles/global.css';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { users } = useAppData();
 
   const navigateTo = (page, query = '') => {
     const paths = {
@@ -48,12 +50,26 @@ function App() {
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        setCurrentUser(JSON.parse(storedUser));
+      }
+    } catch {
+      localStorage.removeItem('currentUser');
     }
     setLoading(false);
   }, []);
+
+  // End the session if an admin deactivates the signed-in account.
+  useEffect(() => {
+    if (!currentUser) return;
+    const record = users.find(u => u.id === currentUser.id);
+    if (record && record.active === false) {
+      localStorage.removeItem('currentUser');
+      setCurrentUser(null);
+    }
+  }, [users, currentUser]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -143,7 +159,7 @@ function App() {
         path="/notifications"
         element={
           currentUser ? (
-            <Notifications user={currentUser} />
+            <Notifications user={currentUser} onNavigate={navigateTo} />
           ) : (
             <Navigate to="/login" replace />
           )
@@ -153,7 +169,7 @@ function App() {
         path="/messages"
         element={
           currentUser ? (
-            <Messages user={currentUser} />
+            <Messages user={currentUser} onNavigate={navigateTo} />
           ) : (
             <Navigate to="/login" replace />
           )

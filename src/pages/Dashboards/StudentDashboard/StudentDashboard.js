@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -14,6 +14,11 @@ import ConfirmModal from '../../../components/ConfirmModal/ConfirmModal';
 import { useToast } from '../../../components/Toast/Toast';
 import FloatingMessages from '../../../components/FloatingMessages/FloatingMessages.js';
 import { useAppData } from '../../../data/useAppData';
+import { isProjectMember } from '../../../utils/ownership';
+import { studentInternshipView } from '../../../utils/internships';
+import { todayISO, formatDate } from '../../../utils/time';
+import { notificationsFor as visibleNotifications, isNotificationRead } from '../../../utils/notifications';
+import { useSectionParam } from '../../../hooks/useSectionParam';
 import './StudentDashboard.css';
 
 const NAV_ITEMS = [
@@ -23,23 +28,48 @@ const NAV_ITEMS = [
   { key: 'Notifications', icon: Bell },
 ];
 
-// Get mock data from appData
-function getMockDataFromAppData(internships, projects, notifications, tasks) {
-  const mockStats = [
-    { label: 'Active projects', value: projects.filter(p => p.status === 'Active').length, sub: '2 flagged' },
-    { label: 'Internships', value: internships.length, sub: '1 interview' },
-    { label: 'Tasks', value: tasks.filter(t => t.status === 'Pending').length, sub: '2 overdue' },
-    { label: 'Notifications', value: 7, sub: '3 unread' },
+const initialsOf = (name) => (name || '').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+// Badge class for internship / application status, e.g. 'Currently Hiring' -> 'intern-currently-hiring'.
+const internBadgeClass = (status) => `intern-${(status || '').toLowerCase().replace(/\s+/g, '-')}`;
+
+// This user's notifications, with `read` resolved per user.
+const notificationsFor = (notifications, user) =>
+  visibleNotifications(notifications, user).map(n => ({ ...n, read: isNotificationRead(n, user) }));
+
+function getDashboardData(user, internships, projects, notifications, tasks) {
+  const myNotifications = notificationsFor(notifications, user);
+  const stats = [
+    {
+      label: 'Active projects',
+      value: projects.filter(p => p.status === 'Active').length,
+      sub: `${projects.filter(p => p.flagged).length} flagged`,
+    },
+    {
+      label: 'Internships',
+      value: internships.filter(i => i.listingStatus === 'Currently Hiring').length,
+      sub: `${internships.filter(i => i.status === 'Interview').length} interview`,
+    },
+    {
+      label: 'Tasks',
+      value: tasks.filter(t => t.status === 'Pending').length,
+      sub: `${tasks.filter(t => t.overdue && t.status !== 'Completed').length} overdue`,
+    },
+    {
+      label: 'Notifications',
+      value: myNotifications.length,
+      sub: `${myNotifications.filter(n => !n.read).length} unread`,
+    },
   ];
-  
-  const mockProjects = projects.map(p => ({
+
+  const projectRows = projects.map(p => ({
     id: p.id,
     title: p.title,
     course: p.course,
     visibility: p.visibility,
   }));
-  
-  const mockTasks = tasks.map(t => ({
+
+  const taskRows = tasks.map(t => ({
     id: t.id,
     title: t.title,
     projectTitle: t.projectTitle,
@@ -48,32 +78,28 @@ function getMockDataFromAppData(internships, projects, notifications, tasks) {
     due: t.dueDate,
     late: t.overdue,
   }));
-  
-  const mockNotifications = notifications.slice(0, 3).map(n => ({
-    id: n.id,
-    text: n.message,
-    time: n.time,
-    read: n.read,
+
+  // Everyone you share a project with, de-duplicated.
+  const collaboratorMap = new Map();
+  projects.forEach(p => (p.collaborators || []).forEach(c => {
+    if (c.email && c.email !== user.email && !collaboratorMap.has(c.email)) {
+      collaboratorMap.set(c.email, {
+        id: c.email,
+        name: c.name,
+        initials: c.initials || initialsOf(c.name),
+        status: (c.status || 'Accepted').toLowerCase() === 'accepted' ? 'accepted' : 'pending',
+      });
+    }
   }));
-  
-  const mockCollaborators = [
-    { id: 1, name: 'Ahmed Hassan', initials: 'AH', status: 'accepted' },
-    { id: 2, name: 'Sara Nour', initials: 'SN', status: 'pending' },
-  ];
-  
-  const mockInvitations = projects.slice(0, 2).map(p => ({
-    id: p.id,
-    project: p.title,
-    projectId: p.id,
-    from: 'Instructor',
-    course: p.course,
-  }));
-  
-  return { mockStats, mockProjects, mockTasks, mockNotifications, mockCollaborators, mockInvitations };
+
+  return { stats, projectRows, taskRows, collaborators: [...collaboratorMap.values()], myNotifications };
 }
 
-function OverviewSection({ firstName, userEmail, internshipData, setPendingApply, navigate, invitations, onAccept, onDecline }) {
-  const { projects, notifications, tasks, updateTask } = useAppData();
+function OverviewSection({ user, firstName, userEmail, internshipData, setPendingApply, navigate, invitations, onAccept, onDecline }) {
+  const { projects: allProjects, notifications, tasks: allTasks, updateTask, setNotificationsRead } = useAppData();
+  const projects = allProjects.filter(p => isProjectMember(p, user));
+  const myProjectIds = new Set(projects.map(p => p.id));
+  const tasks = allTasks.filter(t => myProjectIds.has(t.projectId));
 
   const toggleTask = (taskId) => {
     const task = tasks.find(t => t.id === taskId);
@@ -83,12 +109,14 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
       overdue: task.status === 'Completed' ? task.overdue : false,
     });
   };
-  const { mockStats, mockProjects, mockTasks, mockCollaborators } = getMockDataFromAppData(internshipData, projects, notifications, tasks);
-  // Show notifications targeted at this user (by email) + general/role-based ones
-  const mockNotifications = notifications
-    .filter(n => !n.recipientEmail || n.recipientEmail === userEmail)
+  const {
+    stats, projectRows, taskRows,
+    collaborators, myNotifications,
+  } = getDashboardData(user, internshipData, projects, notifications, tasks);
+  const notificationRows = myNotifications
     .slice(0, 3)
     .map(n => ({ id: n.id, text: n.message, time: n.time, read: n.read }));
+  const markAllRead = () => setNotificationsRead(myNotifications.filter(n => !n.read).map(n => n.id), user, true);
 
   return (
     <>
@@ -96,7 +124,7 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
       <div className="sd-welcome">
         <div>
           <h1 className="sd-welcome-title">Welcome back, {firstName}</h1>
-          <p className="sd-welcome-sub">Computer Science · Spring 2025</p>
+          <p className="sd-welcome-sub">{user.major || user.email}</p>
         </div>
         <button className="sd-portfolio-btn" onClick={() => navigate('/portfolio')}>
           View Portfolio
@@ -105,7 +133,7 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
 
       {/* Stats row */}
       <div className="sd-stats">
-        {mockStats.map(s => (
+        {stats.map(s => (
           <div key={s.label} className="sd-stat">
             <div className="sd-stat-label">{s.label}</div>
             <div className="sd-stat-value">{s.value}</div>
@@ -125,7 +153,7 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
               View all <ArrowRight size={12} />
             </button>
           </div>
-          {mockProjects.map(p => (
+          {projectRows.map(p => (
             <div key={p.id} className="sd-row">
               <div className="sd-row-icon"><Folder size={16} /></div>
               <div className="sd-row-text">
@@ -148,16 +176,20 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
               View all <ArrowRight size={12} />
             </button>
           </div>
-          {mockTasks.map(t => (
+          {taskRows.map(t => (
             <div key={t.id} className="sd-task-row">
-              <div
+              <button
+                type="button"
+                role="checkbox"
+                aria-checked={t.done}
+                aria-label={`${t.title}: ${t.done ? 'mark as pending' : 'mark as complete'}`}
                 className={`sd-check ${t.done ? 'done' : ''}`}
                 onClick={() => toggleTask(t.id)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', padding: 0 }}
                 title={t.done ? 'Mark as pending' : 'Mark as complete'}
               >
                 {t.done && <Check size={12} strokeWidth={3} />}
-              </div>
+              </button>
               <div style={{ flex: 1 }}>
                 <span className={`sd-task-name ${t.done ? 'done' : ''}`}>{t.title}</span>
                 {t.projectTitle && (
@@ -184,9 +216,9 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
         <div className="sd-card">
           <div className="sd-card-header">
             <span className="sd-card-title">Recent notifications</span>
-            <span className="sd-see-all">Mark all read</span>
+            <button type="button" className="sd-see-all" onClick={markAllRead}>Mark all read</button>
           </div>
-          {mockNotifications.map(n => (
+          {notificationRows.map(n => (
             <div key={n.id} className="sd-notif-row">
               <div className={`sd-notif-dot ${n.read ? 'read' : ''}`} />
               <div>
@@ -199,7 +231,10 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
           <div className="sd-card-header" style={{ marginTop: '16px' }}>
             <span className="sd-card-title">Collaborators</span>
           </div>
-          {mockCollaborators.map(c => (
+          {collaborators.length === 0 && (
+            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', padding: '8px 0' }}>No collaborators yet</div>
+          )}
+          {collaborators.map(c => (
             <div key={c.id} className="sd-collab-row">
               <div className="sd-collab-avatar">{c.initials}</div>
               <span className="sd-collab-name">{c.name}</span>
@@ -247,7 +282,7 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
                 <div className="sd-intern-company">{intern.company}</div>
                 <div className="sd-intern-title">{intern.title}</div>
               </div>
-              <span className={`sd-badge intern-${intern.status.toLowerCase()}`}>{intern.status}</span>
+              <span className={`sd-badge ${internBadgeClass(intern.status)}`}>{intern.status}</span>
             </div>
             <div className="sd-intern-skills">
               {intern.skills.map(skill => (
@@ -256,9 +291,9 @@ function OverviewSection({ firstName, userEmail, internshipData, setPendingApply
               <span className="sd-skill-tag">{intern.duration}</span>
             </div>
             <div className="sd-intern-footer">
-              {intern.deadline && <span className="sd-intern-deadline">Deadline: {intern.deadline}</span>}
-              {intern.appliedDate && <span className="sd-intern-info">Applied {intern.appliedDate}</span>}
-              {intern.interviewDate && <span className="sd-intern-info">Interview: {intern.interviewDate}</span>}
+              {intern.deadline && <span className="sd-intern-deadline">Deadline: {formatDate(intern.deadline)}</span>}
+              {intern.appliedDate && <span className="sd-intern-info">Applied {formatDate(intern.appliedDate)}</span>}
+              {intern.interviewDate && <span className="sd-intern-info">Interview: {formatDate(intern.interviewDate)}</span>}
             </div>
             {intern.status === 'Currently Hiring' ? (
               <button className="sd-intern-btn" onClick={() => setPendingApply(intern)}>Apply</button>
@@ -289,7 +324,7 @@ function InternshipsSection({ internshipData, setPendingApply, navigate }) {
                 <div className="sd-intern-company">{intern.company}</div>
                 <div className="sd-intern-title">{intern.title}</div>
               </div>
-              <span className={`sd-badge intern-${intern.status.toLowerCase()}`}>{intern.status}</span>
+              <span className={`sd-badge ${internBadgeClass(intern.status)}`}>{intern.status}</span>
             </div>
             <div className="sd-intern-skills">
               {intern.skills.map(skill => (
@@ -298,9 +333,9 @@ function InternshipsSection({ internshipData, setPendingApply, navigate }) {
               <span className="sd-skill-tag">{intern.duration}</span>
             </div>
             <div className="sd-intern-footer">
-              {intern.deadline && <span className="sd-intern-deadline">Deadline: {intern.deadline}</span>}
-              {intern.appliedDate && <span className="sd-intern-info">Applied {intern.appliedDate}</span>}
-              {intern.interviewDate && <span className="sd-intern-info">Interview: {intern.interviewDate}</span>}
+              {intern.deadline && <span className="sd-intern-deadline">Deadline: {formatDate(intern.deadline)}</span>}
+              {intern.appliedDate && <span className="sd-intern-info">Applied {formatDate(intern.appliedDate)}</span>}
+              {intern.interviewDate && <span className="sd-intern-info">Interview: {formatDate(intern.interviewDate)}</span>}
             </div>
             {intern.status === 'Currently Hiring' ? (
               <button className="sd-intern-btn" onClick={() => setPendingApply(intern)}>Apply</button>
@@ -314,9 +349,9 @@ function InternshipsSection({ internshipData, setPendingApply, navigate }) {
   );
 }
 
-function ProjectsSection({ navigate }) {
+function ProjectsSection({ user, navigate }) {
   const { projects } = useAppData();
-  const { mockProjects } = getMockDataFromAppData([], projects, [], []);
+  const { projectRows } = getDashboardData(user, [], projects.filter(p => isProjectMember(p, user)), [], []);
   return (
     <div className="sd-card">
       <div className="sd-card-header">
@@ -325,7 +360,7 @@ function ProjectsSection({ navigate }) {
           Full view <ArrowRight size={12} />
         </button>
       </div>
-      {mockProjects.map(p => (
+      {projectRows.map(p => (
         <div key={p.id} className="sd-row">
           <div className="sd-row-icon"><Folder size={16} /></div>
           <div className="sd-row-text">
@@ -342,18 +377,18 @@ function ProjectsSection({ navigate }) {
   );
 }
 
-function NotificationsSection({ userEmail }) {
-  const { notifications } = useAppData();
-  const mockNotifications = notifications
-    .filter(n => !n.recipientEmail || n.recipientEmail === userEmail)
-    .map(n => ({ id: n.id, text: n.message, time: n.time, read: n.read }));
+function NotificationsSection({ user }) {
+  const { notifications, setNotificationsRead } = useAppData();
+  const mine = notificationsFor(notifications, user);
+  const notificationRows = mine.map(n => ({ id: n.id, text: n.message, time: n.time, read: n.read }));
+  const markAllRead = () => setNotificationsRead(mine.filter(n => !n.read).map(n => n.id), user, true);
   return (
     <div className="sd-card">
       <div className="sd-card-header">
         <span className="sd-card-title">Notifications</span>
-        <span className="sd-see-all">Mark all read</span>
+        <button type="button" className="sd-see-all" onClick={markAllRead}>Mark all read</button>
       </div>
-      {mockNotifications.map(n => (
+      {notificationRows.map(n => (
         <div key={n.id} className="sd-notif-row">
           <div className={`sd-notif-dot ${n.read ? 'read' : ''}`} />
           <div>
@@ -368,15 +403,14 @@ function NotificationsSection({ userEmail }) {
 
 export default function StudentDashboard({ user, onNavigate }) {
   const {
-    internships: internshipSource, projects,
-    updateInternships, updateProject,
+    internships: rawInternships, projects,
+    addApplicantToInternship, updateProject,
     projectInvitations, deleteProjectInvitation,
   } = useAppData();
   const navigate = useNavigate();
   const toast = useToast();
-  const [internshipData, setInternshipData] = useState(internshipSource);
   const [pendingApply, setPendingApply] = useState(null);
-  const [activeSection, setActiveSection] = useState('Overview');
+  const [activeSection, setActiveSection] = useSectionParam('Overview');
   const [messagesOpen, setMessagesOpen] = useState(false);
   
   // Read real invitations for this user from the global persistent store
@@ -386,28 +420,28 @@ export default function StudentDashboard({ user, onNavigate }) {
     )
   );
 
-  // Sync internship data with hook whenever source changes
-  useEffect(() => {
-    setInternshipData(internshipSource);
-  }, [internshipSource]);
+  // Listing status + this student's own application status (never written back).
+  const internshipData = rawInternships
+    .filter(i => !i.archived)
+    .map(i => studentInternshipView(i, user));
 
   // NOTE: invitations are NOT re-derived from projects on change —
   // that would resurrect accepted/declined ones.
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const firstName = user.name?.split(' ')[0] || 'Student';
 
   const applyToInternship = (intern) => {
-    const updated = internshipData.map((item) =>
-      item.id === intern.id ? { ...item, status: 'Applied', appliedDate: 'Today' } : item
-    );
-    setInternshipData(updated);
-    updateInternships(updated);
+    addApplicantToInternship(intern.id, {
+      name: user.name,
+      email: user.email,
+      major: user.major || '',
+      status: 'Applied',
+      appliedDate: todayISO(),
+    });
     setPendingApply(null);
     toast.success(`Application submitted to ${intern.company}!`);
   };
@@ -444,6 +478,7 @@ export default function StudentDashboard({ user, onNavigate }) {
       case 'Overview':
         return (
           <OverviewSection
+            user={user}
             firstName={firstName}
             userEmail={user.email}
             internshipData={internshipData}
@@ -463,12 +498,13 @@ export default function StudentDashboard({ user, onNavigate }) {
           />
         );
       case 'Projects':
-        return <ProjectsSection navigate={navigate} />;
+        return <ProjectsSection user={user} navigate={navigate} />;
       case 'Notifications':
-        return <NotificationsSection userEmail={user.email} />;
+        return <NotificationsSection user={user} />;
       default:
         return (
           <OverviewSection
+            user={user}
             firstName={firstName}
             userEmail={user.email}
             internshipData={internshipData}
@@ -517,11 +553,13 @@ export default function StudentDashboard({ user, onNavigate }) {
 
       {pendingApply && (
         <ConfirmModal
+          open
+          variant="success"
           title="Apply for this internship?"
           message={`You are about to apply to ${pendingApply.title} at ${pendingApply.company}.`}
           confirmLabel="Yes, apply"
           onConfirm={() => applyToInternship(pendingApply)}
-          onCancel={() => setPendingApply(null)}
+          onClose={() => setPendingApply(null)}
         />
       )}
 

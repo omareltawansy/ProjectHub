@@ -1,7 +1,26 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, createContext, useContext } from 'react';
 import appData from './appData';
+import { withReadState } from '../utils/notifications';
 
 const STORAGE_KEY = 'appData_storage';
+
+// Bump when appData.js gains new seed records. On upgrade, seed records whose id
+// isn't in the saved data are added once; existing records are never touched,
+// and after the upgrade deleted records are not brought back.
+const SEED_VERSION = 2;
+
+function migrate(parsed) {
+  if (parsed.seedVersion === SEED_VERSION) return parsed;
+  const next = { ...parsed, seedVersion: SEED_VERSION };
+  Object.entries(appData).forEach(([key, seed]) => {
+    if (!Array.isArray(seed) || !Array.isArray(parsed[key])) return;
+    if (!seed.every(item => item && typeof item === 'object' && 'id' in item)) return;
+    const have = new Set(parsed[key].map(item => item?.id));
+    const missing = seed.filter(item => !have.has(item.id));
+    if (missing.length) next[key] = [...parsed[key], ...missing];
+  });
+  return next;
+}
 
 /**
  * useAppData Hook - Centralized state management with localStorage persistence
@@ -11,18 +30,18 @@ const STORAGE_KEY = 'appData_storage';
  * 
  * All changes are automatically saved to localStorage and restored on app load
  */
-export function useAppData() {
+function useAppDataStore() {
   // Load from localStorage on first mount, otherwise use default appData
   const [state, setState] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const parsed = JSON.parse(stored);
+        const parsed = migrate(JSON.parse(stored));
         // Merge with defaults so newly-added top-level fields (courseOptions, etc.)
         // are always present even if localStorage pre-dates them.
         return { ...appData, ...parsed };
       }
-      return appData;
+      return { ...appData, seedVersion: SEED_VERSION };
     } catch (error) {
       console.error('Failed to load from localStorage:', error);
       return appData;
@@ -31,22 +50,12 @@ export function useAppData() {
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    const stripped = {
-      ...state,
-      // Strip base64 image blobs — they fill the 5 MB quota almost instantly
-      users:     (state.users     || []).map(u => { const { profilePicture, ...r } = u; return r; }),
-      employers: (state.employers || []).map(e => { const { profilePicture, ...r } = e; return r; }),
-    };
+    // Avatars are downscaled on upload (utils/image.js), so they're small enough to persist.
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (err) {
-      if (err.name === 'QuotaExceededError' || err.code === 22) {
-        // Last-resort: clear old data and retry once
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
-        } catch (_) { /* silently ignore if still over quota */ }
-      }
+      // Never wipe existing data on quota errors — keep the last good copy on disk.
+      console.error('Failed to save app data to localStorage:', err);
     }
   }, [state]);
 
@@ -136,6 +145,17 @@ export function useAppData() {
         id: Math.max(...prev.notifications.map(n => Number(n.id) || 0), 0) + 1, 
         ...notification 
       }]
+    }));
+  }, []);
+
+  // Set read/unread for one user. `ids` may be a single id or an array.
+  const setNotificationsRead = useCallback((ids, user, read = true) => {
+    const idSet = new Set([].concat(ids));
+    setState(prev => ({
+      ...prev,
+      notifications: prev.notifications.map(n =>
+        idSet.has(n.id) ? withReadState(n, user, read, prev.users) : n
+      ),
     }));
   }, []);
 
@@ -390,6 +410,7 @@ export function useAppData() {
     updateNotifications,
     addNotification,
     deleteNotification,
+    setNotificationsRead,
 
     // Message methods
     updateMessage,
@@ -436,4 +457,21 @@ export function useAppData() {
     disableNotifications,
     enableNotifications,
   };
+}
+
+const AppDataContext = createContext(null);
+
+// Single shared store for the whole app. Every useAppData() call reads the same
+// state, so writes from one component are visible to (and never clobbered by) others.
+export function AppDataProvider({ children }) {
+  const store = useAppDataStore();
+  return <AppDataContext.Provider value={store}>{children}</AppDataContext.Provider>;
+}
+
+export function useAppData() {
+  const ctx = useContext(AppDataContext);
+  if (!ctx) {
+    throw new Error('useAppData must be used within an AppDataProvider');
+  }
+  return ctx;
 }

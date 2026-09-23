@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Folder, Calendar, User, AlertCircle } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav.js';
 import { useAppData } from '../../data/useAppData.js';
+import { isProjectMember } from '../../utils/ownership';
 import './alltasksview.css';
 
 export default function AllTasksView({ user, onNavigate, inline = false, onBack }) {
   const navigate = useNavigate();
-  const { tasks, projects, updateTask } = useAppData();
+  const { tasks: allTasks, projects: allProjects, updateTask } = useAppData();
+  const projects = allProjects.filter(p => isProjectMember(p, user));
+  const myProjectIds = new Set(projects.map(p => p.id));
+  const tasks = allTasks.filter(t => myProjectIds.has(t.projectId));
 
   const toggleTask = (taskId) => {
     const task = tasks.find(t => t.id === taskId);
@@ -19,10 +23,8 @@ export default function AllTasksView({ user, onNavigate, inline = false, onBack 
   };
   const [filter, setFilter] = useState('All');
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const filters = ['All', 'Pending', 'Completed', 'Postponed', 'Overdue'];
 
@@ -36,7 +38,7 @@ export default function AllTasksView({ user, onNavigate, inline = false, onBack 
   });
 
   // Group tasks by project
-  const groupedTasks = projects.slice(0, 3).map(project => ({
+  const groupedTasks = projects.map(project => ({
     project,
     tasks: filteredTasks.filter(t => t.projectId === project.id),
   })).filter(g => g.tasks.length > 0);
@@ -117,14 +119,18 @@ export default function AllTasksView({ user, onNavigate, inline = false, onBack 
                 <div className="atv-tasks">
                   {projectTasks.map(task => (
                     <div key={task.id} className={`atv-task-row ${task.overdue ? 'overdue' : ''} ${task.status === 'Completed' ? 'completed' : ''}`}>
-                      <div
+                      <button
+                        type="button"
+                        role="checkbox"
+                        aria-checked={task.status === 'Completed'}
+                        aria-label={`${task.title}: ${task.status === 'Completed' ? 'mark as pending' : 'mark as complete'}`}
                         className={`atv-check ${task.status === 'Completed' ? 'done' : ''}`}
                         onClick={() => toggleTask(task.id)}
                         title={task.status === 'Completed' ? 'Mark as pending' : 'Mark as complete'}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', padding: 0, font: 'inherit' }}
                       >
                         {task.status === 'Completed' && '✓'}
-                      </div>
+                      </button>
                       <div className="atv-task-info">
                         <div className="atv-task-title">{task.title}</div>
                         <div className="atv-task-desc">{task.description}</div>

@@ -5,6 +5,7 @@ import PrimaryNav from '../../../components/PrimaryNav/PrimaryNav.js';
 import EmployerSettings from './EmployerSettings.js';
 import { useAppData } from '../../../data/useAppData.js';
 import { safeUrl } from '../../../utils/safeUrl.js';
+import Dialog from '../../../components/Dialog/Dialog';
 import './EmployerPublicProfile.css';
 
 export default function EmployerPublicProfile({ user, onNavigate }) {
@@ -15,7 +16,7 @@ export default function EmployerPublicProfile({ user, onNavigate }) {
   // All hooks must be before early returns
   const [showEdit, setShowEdit] = useState(false);
 
-  if (!user) { window.location.href = '/login'; return null; }
+  if (!user) return null; // App.js route guards handle the redirect
 
   // Resolve which employer to show: by URL param, or the current user's own profile
   let employer = null;
@@ -241,12 +242,12 @@ export default function EmployerPublicProfile({ user, onNavigate }) {
       {/* Edit modal (settings reused) */}
       {showEdit && isOwner && (
         <div className="epro-modal-overlay" onClick={() => setShowEdit(false)}>
-          <div className="epro-modal-box" onClick={e => e.stopPropagation()}>
+          <Dialog className="epro-modal-box" onClose={() => setShowEdit(false)}>
             <EmployerSettings
               user={{ ...user, ...employer }}
               onClose={() => setShowEdit(false)}
             />
-          </div>
+          </Dialog>
         </div>
       )}
     </div>

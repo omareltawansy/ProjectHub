@@ -3,26 +3,53 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Trash2, Plus, ArrowLeft, Folder, Lock, Globe, Check, BookmarkPlus, BookmarkX, AlertCircle, X } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav.js';
 import { useAppData } from '../../data/useAppData.js';
+import { isProjectMember, isProjectOwner } from '../../utils/ownership';
+import Dialog from '../../components/Dialog/Dialog';
 import './projectview.css';
 
 export default function ProjectView({ user, onNavigate, inline = false, onBack, onViewProject }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { projects: initialProjects, courseOptions, programmingLanguages, updateProjects } = useAppData();
-  const normalizeProject = ({ studentName, studentEmail, status, flagged, flagReason, appeal, rating, comments, techStack, createdAt, ...rest }) => ({
-    ...rest,
-    languages: rest.languages || techStack || [],
-    onPortfolio: rest.onPortfolio ?? false,
-    createdDate: rest.createdDate || createdAt || '',
+  // View-only shape for this page. Never written back directly — see commitProjects.
+  const normalizeProject = (p) => ({
+    ...p,
+    languages: p.languages || p.techStack || [],
+    github: p.github || p.githubLink || '',
+    report: p.report || p.reportLink || '',
+    onPortfolio: p.onPortfolio ?? false,
+    createdDate: p.createdDate || p.createdAt || '',
   });
+  const myProjects = (list) => list.filter(p => isProjectMember(p, user)).map(normalizeProject);
 
-  const [projects, setProjects] = useState(initialProjects.map(normalizeProject));
+  const [projects, setProjects] = useState(() => myProjects(initialProjects));
 
   // Sync local state with hook data when initialProjects changes
   useEffect(() => {
-    setProjects(initialProjects.map(normalizeProject));
+    setProjects(myProjects(initialProjects));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialProjects]);
+  }, [initialProjects, user?.email]);
+
+  // Apply this user's edited project list to the global store: other users'
+  // projects are untouched, and fields this page doesn't know about are preserved.
+  const commitProjects = (nextMine) => {
+    setProjects(nextMine);
+    const prevMineIds = new Set(initialProjects.filter(p => isProjectMember(p, user)).map(p => p.id));
+    const nextById = new Map(nextMine.map(p => [p.id, p]));
+    const existingIds = new Set(initialProjects.map(p => p.id));
+    const merged = initialProjects
+      // Only the owner can delete a project; a collaborator "deleting" it just leaves it.
+      .filter(p => !prevMineIds.has(p.id) || nextById.has(p.id) || !isProjectOwner(p, user))
+      .map(p => {
+        if (nextById.has(p.id)) return { ...p, ...nextById.get(p.id) };
+        if (prevMineIds.has(p.id)) {
+          return { ...p, collaborators: (p.collaborators || []).filter(c => c.email !== user.email) };
+        }
+        return p;
+      });
+    const added = nextMine.filter(p => !existingIds.has(p.id));
+    updateProjects([...added, ...merged]);
+  };
 
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -57,10 +84,8 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
     }
   }, [location.search]);
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const hasBachelorProject = projects.some(p => p.course === 'Bachelor');
 
@@ -100,11 +125,19 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
     }
 
     const newProject = {
-      id: Math.max(...projects.map(p => p.id), 0) + 1,
+      id: Math.max(...initialProjects.map(p => Number(p.id) || 0), 0) + 1,
+      studentName: user.name,
+      studentEmail: user.email,
+      status: 'Active',
+      collaborators: [{
+        id: 1, name: user.name, email: user.email, status: 'Accepted', role: 'Owner',
+        initials: (user.name || '').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+      }],
       title: formData.title,
       course: formData.course,
       visibility: formData.visibility,
-      createdDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      createdAt: new Date().toISOString().slice(0, 10),
+      description: formData.description,
       onPortfolio: false,
       github: formData.github,
       report: formData.report,
@@ -112,8 +145,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       demoVideo: formData.demoVideo,
     };
     const updated = [newProject, ...projects];
-    setProjects(updated);
-    updateProjects(updated);
+    commitProjects(updated);
     setFormData({
       title: '',
       course: '',
@@ -146,8 +178,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
   const confirmDelete = () => {
     if (projectToDelete) {
       const updated = projects.filter(p => p.id !== projectToDelete);
-      setProjects(updated);
-      updateProjects(updated);
+      commitProjects(updated);
       setSelectedProjects(prev => { const next = new Set(prev); next.delete(projectToDelete); return next; });
       setShowDeleteModal(false);
       setProjectToDelete(null);
@@ -167,8 +198,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
 
   const confirmMassDelete = () => {
     const updated = projects.filter(p => !selectedProjects.has(p.id));
-    setProjects(updated);
-    updateProjects(updated);
+    commitProjects(updated);
     setSelectedProjects(new Set());
     setShowDeleteModal(false);
     setProjectToDelete(null);
@@ -197,8 +227,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       const updated = projects.map(p =>
         p.id === portfolioProjectId ? { ...p, onPortfolio: !p.onPortfolio } : p
       );
-      setProjects(updated);
-      updateProjects(updated);
+      commitProjects(updated);
       setShowPortfolioConfirm(false);
       setPortfolioAction(null);
       setPortfolioProjectId(null);
@@ -251,8 +280,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       }
       return p;
     });
-    setProjects(updated);
-    updateProjects(updated);
+    commitProjects(updated);
 
     setShowPrivateWarning(false);
     setPendingPortfolioProjects([]);
@@ -280,8 +308,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
     const updated = projects.map(p =>
       selectedProjects.has(p.id) ? { ...p, onPortfolio: newOnPortfolioValue } : p
     );
-    setProjects(updated);
-    updateProjects(updated);
+    commitProjects(updated);
 
     setSelectedProjects(new Set());
     setShowPortfolioModal(false);
@@ -302,8 +329,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       const updated = projects.map(p =>
         p.id === id ? { ...p, visibility: 'private' } : p
       );
-      setProjects(updated);
-      updateProjects(updated);
+      commitProjects(updated);
     }
   };
 
@@ -312,8 +338,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       const updated = projects.map(p =>
         p.id === visibilityProjectId ? { ...p, visibility: 'public' } : p
       );
-      setProjects(updated);
-      updateProjects(updated);
+      commitProjects(updated);
       setShowVisibilityWarning(false);
       setVisibilityProjectId(null);
     }
@@ -500,7 +525,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
       {/* Create Project Modal */}
       {showModal && (
         <div className="pv-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="pv-modal pv-create-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-create-modal" onClose={() => setShowModal(false)}>
             <div className="pv-modal-header">
               <h2>Create New Project</h2>
               <button className="pv-modal-close" onClick={() => setShowModal(false)}>✕</button>
@@ -667,14 +692,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
                 </button>
               </div>
             </form>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Bachelor Already Exists Error Modal */}
       {showBachelorError && (
         <div className="pv-modal-overlay" onClick={() => setShowBachelorError(false)}>
-          <div className="pv-modal pv-warning-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-warning-modal" onClose={() => setShowBachelorError(false)}>
             <div className="pv-warning-content">
               <div className="pv-warning-icon">
                 <AlertCircle size={32} />
@@ -687,14 +712,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
             <div className="pv-warning-actions">
               <button className="pv-warning-proceed" onClick={() => setShowBachelorError(false)}>OK</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Private Project Warning Modal */}
       {showPrivateWarning && (
         <div className="pv-modal-overlay" onClick={cancelPrivateWarning}>
-          <div className="pv-modal pv-warning-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-warning-modal" onClose={cancelPrivateWarning}>
             <div className="pv-warning-content">
               <div className="pv-warning-icon">
                 <AlertCircle size={32} />
@@ -717,14 +742,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
               <button className="pv-warning-cancel" onClick={cancelPrivateWarning}>Cancel</button>
               <button className="pv-warning-proceed" onClick={confirmPrivateWarning}>Yes, Make Public & Add</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Portfolio Toggle Confirmation Modal */}
       {showPortfolioConfirm && (
         <div className="pv-modal-overlay" onClick={cancelTogglePortfolio}>
-          <div className="pv-modal pv-confirm-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-confirm-modal" onClose={cancelTogglePortfolio}>
             <div className="pv-confirm-content">
               <div className={`pv-confirm-icon ${portfolioAction}`}>
                 {portfolioAction === 'add' ? <BookmarkPlus size={32} /> : <BookmarkX size={32} />}
@@ -743,14 +768,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
                 {portfolioAction === 'add' ? 'Add to Portfolio' : 'Remove from Portfolio'}
               </button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Mass Portfolio Action Confirmation Modal */}
       {showPortfolioModal && (
         <div className="pv-modal-overlay" onClick={cancelMassPortfolioModal}>
-          <div className="pv-modal pv-confirm-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-confirm-modal" onClose={cancelMassPortfolioModal}>
             <div className="pv-confirm-content">
               <div className={`pv-confirm-icon ${portfolioAction}`}>
                 {portfolioAction === 'add' ? <BookmarkPlus size={32} /> : <BookmarkX size={32} />}
@@ -774,14 +799,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
                 {portfolioAction === 'add' ? 'Add to Portfolio' : 'Remove from Portfolio'}
               </button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="pv-modal-overlay" onClick={cancelDelete}>
-          <div className="pv-modal pv-delete-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-delete-modal" onClose={cancelDelete}>
             <div className="pv-delete-content">
               <div className="pv-delete-icon">
                 <Trash2 size={32} />
@@ -803,14 +828,14 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
                 Delete
               </button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 
       {/* Visibility Change Warning Modal */}
       {showVisibilityWarning && (
         <div className="pv-modal-overlay" onClick={cancelVisibilityChange}>
-          <div className="pv-modal pv-warning-modal" onClick={(e) => e.stopPropagation()}>
+          <Dialog className="pv-modal pv-warning-modal" onClose={cancelVisibilityChange}>
             <div className="pv-warning-content">
               <div className="pv-warning-icon visibility">
                 <AlertCircle size={32} />
@@ -833,7 +858,7 @@ export default function ProjectView({ user, onNavigate, inline = false, onBack, 
               <button className="pv-warning-cancel" onClick={cancelVisibilityChange}>Keep Private</button>
               <button className="pv-warning-proceed" onClick={confirmVisibilityChange}>Yes, Set as Public</button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
     </>

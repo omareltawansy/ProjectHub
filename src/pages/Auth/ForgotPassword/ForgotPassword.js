@@ -24,7 +24,7 @@ export default function ForgotPassword({ navigateTo }) {
             return;
         }
 
-        const userExists = users.find((user) => user.email === email);
+        const userExists = users.find((user) => (user.email || '').toLowerCase() === email.trim().toLowerCase());
 
         if (!userExists) {
             setError('Email not found in our system.');
@@ -34,8 +34,6 @@ export default function ForgotPassword({ navigateTo }) {
 
         const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
         setGeneratedOtp(randomOtp);
-
-        console.log(`OTP for ${email}: ${randomOtp}`);
 
         setLoading(false);
         setStep(2);
@@ -85,15 +83,13 @@ export default function ForgotPassword({ navigateTo }) {
             return;
         }
 
-        const userToUpdate = users.find((user) => user.email === email);
+        const userToUpdate = users.find((user) => (user.email || '').toLowerCase() === email.trim().toLowerCase());
         if (userToUpdate) {
             updateUser(userToUpdate.id, { password: newPassword });
         }
 
-        setTimeout(() => {
-            setLoading(false);
-            window.location.href = '/login';
-        }, 1500);
+        setLoading(false);
+        navigateTo('login');
     };
 
     return (
@@ -106,7 +102,7 @@ export default function ForgotPassword({ navigateTo }) {
                         <p>Reset your password</p>
                     </div>
 
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <div className="error-message" role="alert">{error}</div>}
 
                     {step === 1 && (
                         <form onSubmit={handleEmailSubmit}>
@@ -114,9 +110,9 @@ export default function ForgotPassword({ navigateTo }) {
 
                             <div className="form-group">
                                 <input
-                                    type="email"
+                                    type="email" autoComplete="email"
                                     className="form-input"
-                                    placeholder="example123@domain.com"
+                                    placeholder="example123@domain.com" aria-label="Email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled={loading}
@@ -136,12 +132,16 @@ export default function ForgotPassword({ navigateTo }) {
                     {step === 2 && (
                         <form onSubmit={handleOtpSubmit}>
                             <p className="step-label">Enter the OTP sent to your email</p>
+                            {/* No email service in this prototype — surface the code in the UI instead of the console. */}
+                            <p className="step-label" style={{ opacity: 0.75, fontSize: 13 }}>
+                                Demo mode: your code is <strong>{generatedOtp}</strong>
+                            </p>
 
                             <div className="form-group">
                                 <input
                                     type="text"
                                     className="form-input"
-                                    placeholder="Enter 6-digit OTP"
+                                    placeholder="Enter 6-digit OTP" aria-label="One-time code"
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
                                     maxLength="6"
@@ -181,7 +181,7 @@ export default function ForgotPassword({ navigateTo }) {
                                 <input
                                     type="password"
                                     className="form-input"
-                                    placeholder="New Password"
+                                    placeholder="New Password" aria-label="New password"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     disabled={loading}
@@ -192,7 +192,7 @@ export default function ForgotPassword({ navigateTo }) {
                                 <input
                                     type="password"
                                     className="form-input"
-                                    placeholder="Confirm Password"
+                                    placeholder="Confirm Password" aria-label="Confirm password"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     disabled={loading}

@@ -9,6 +9,8 @@ import PrimaryNav from '../../../components/PrimaryNav/PrimaryNav.js';
 import FloatingMessages from '../../../components/FloatingMessages/FloatingMessages.js';
 import MessagesSection from '../AdminDashboard/sections/MessagesSection.js';
 import { useAppData } from '../../../data/useAppData';
+import { useSectionParam } from '../../../hooks/useSectionParam';
+import { notificationsFor, isNotificationRead } from '../../../utils/notifications';
 import './EmployerDashboard.css';
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
@@ -164,9 +166,8 @@ function InternshipsSection({ myInternships, navigate }) {
 // ─── Notifications section ────────────────────────────────────────────────────
 function NotificationsSection({ user }) {
   const { notifications: notificationsSource } = useAppData();
-  const relevant = notificationsSource.filter(
-    (n) => n.role === 'multi' || n.role === user.role
-  );
+  const relevant = notificationsFor(notificationsSource, user)
+    .map((n) => ({ ...n, read: isNotificationRead(n, user) }));
   const unread = relevant.filter((n) => !n.read).length;
 
   return (
@@ -198,13 +199,11 @@ function NotificationsSection({ user }) {
 export default function EmployerDashboard({ user, onNavigate }) {
   const { internships: internshipSource } = useAppData();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('Overview');
+  const [activeSection, setActiveSection] = useSectionParam('Overview');
   const [messagesOpen, setMessagesOpen] = useState(false);
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   const myInternships = internshipSource.filter(
     (i) => i.employerId === user.id && !i.archived

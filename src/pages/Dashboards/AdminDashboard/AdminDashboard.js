@@ -8,6 +8,8 @@ import {
   Briefcase,
   BarChart3,
   Layout,
+  MessageSquare,
+  Bell,
 } from 'lucide-react';
 import PrimaryNav from '../../../components/PrimaryNav/PrimaryNav.js';
 import OverviewSection from './sections/OverviewSection.js';
@@ -21,6 +23,7 @@ import PortfoliosSection from './sections/PortfoliosSection.js';
 import MessagesSection from './sections/MessagesSection.js';
 import NotificationsSection from './sections/NotificationsSection.js';
 import FloatingMessages from '../../../components/FloatingMessages/FloatingMessages.js';
+import { useSectionParam } from '../../../hooks/useSectionParam';
 import './AdminDashboard.css';
 
 const NAV_ITEMS = [
@@ -32,11 +35,13 @@ const NAV_ITEMS = [
   { key: 'Portfolios',    icon: Layout },
   { key: 'Internships',   icon: Briefcase },
   { key: 'Statistics',    icon: BarChart3 },
+  { key: 'Messages',      icon: MessageSquare },
+  { key: 'Notifications', icon: Bell },
 ];
 
 function renderSection(section, onJump, user) {
   switch (section) {
-    case 'Overview':      return <OverviewSection onJump={onJump} />;
+    case 'Overview':      return <OverviewSection onJump={onJump} user={user} />;
     case 'Users':         return <UsersSection />;
     case 'Employers':     return <EmployersSection />;
     case 'Courses':       return <CoursesSection />;
@@ -45,19 +50,17 @@ function renderSection(section, onJump, user) {
     case 'Internships':   return <InternshipsSection />;
     case 'Statistics':    return <StatisticsSection />;
     case 'Messages':      return <MessagesSection user={user} />;
-    case 'Notifications': return <NotificationsSection />;
-    default:              return <OverviewSection onJump={onJump} />;
+    case 'Notifications': return <NotificationsSection user={user} />;
+    default:              return <OverviewSection onJump={onJump} user={user} />;
   }
 }
 
 export default function AdminDashboard({ user, onNavigate }) {
-  const [activeSection, setActiveSection] = useState('Overview');
+  const [activeSection, setActiveSection] = useSectionParam('Overview');
   const [messagesOpen, setMessagesOpen] = useState(false);
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   return (
     <div className="admin-dashboard">

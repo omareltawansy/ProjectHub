@@ -31,7 +31,7 @@ export default function StatisticsSection() {
       color: ROLE_COLORS[role],
       count: users.filter(u => u.role === role).length,
     })),
-    []
+    [users]
   );
 
   const projectStatus = useMemo(() => {
@@ -43,13 +43,13 @@ export default function StatisticsSection() {
       { label: 'Inactive', count: inactive, color: 'var(--text-secondary)' },
       { label: 'Flagged',  count: flagged,  color: 'var(--warning)' },
     ];
-  }, []);
+  }, [projects]);
 
   const employerStatus = useMemo(() => [
     { label: 'Pending',  count: employers.filter(e => e.status === 'pending').length,  color: 'var(--warning)' },
     { label: 'Accepted', count: employers.filter(e => e.status === 'accepted').length, color: 'var(--success)' },
     { label: 'Rejected', count: employers.filter(e => e.status === 'rejected').length, color: 'var(--error)' },
-  ], []);
+  ], [employers]);
 
   const internshipStatus = useMemo(() => {
     const open = internships.filter(i => i.status === 'Currently Hiring' && !i.archived).length;
@@ -60,11 +60,11 @@ export default function StatisticsSection() {
       { label: 'Position Filled',   count: closed,   color: 'var(--info)' },
       { label: 'Archived', count: archived, color: 'var(--text-secondary)' },
     ];
-  }, []);
+  }, [internships]);
 
   const totalApplicants = useMemo(
     () => internships.reduce((sum, i) => sum + (i.applicants?.length || 0), 0),
-    []
+    [internships]
   );
 
   const projectsPerCourse = useMemo(() => {
@@ -76,7 +76,7 @@ export default function StatisticsSection() {
     return Array.from(map.entries())
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count);
-  }, []);
+  }, [projects]);
 
   const pct = (count, total) =>
     total === 0 ? '0%' : `${Math.round((count / total) * 100)}%`;

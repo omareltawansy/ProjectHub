@@ -4,6 +4,7 @@ import { Search, FileText, Flag, RotateCcw, ExternalLink } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
 import { useToast } from '../../../../components/Toast/Toast.js';
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal.js';
+import { safeUrl } from '../../../../utils/safeUrl';
 import './EmployersSection.css';
 
 const TABS = ['All', 'Pending', 'Accepted', 'Rejected', 'Flagged'];
@@ -258,7 +259,7 @@ export default function EmployersSection() {
                                   <div className="es-field">
                                     <span className="es-field-label">Website</span>
                                     <a
-                                      href={employer.website}
+                                      href={safeUrl(employer.website)}
                                       className="es-field-link"
                                       target="_blank"
                                       rel="noopener noreferrer"

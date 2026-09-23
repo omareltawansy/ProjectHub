@@ -419,3 +419,20 @@ a {
   .ad-page-title { font-size: 24px; }
 }
 
+
+/* Dialogs take focus on open; the container itself needs no focus ring. */
+[role="dialog"]:focus,
+[role="alertdialog"]:focus {
+  outline: none;
+}
+
+/* Keyboard focus ring. Many components set `outline: none` for mouse users;
+   :focus-visible only matches keyboard focus, so this restores a visible
+   indicator without affecting clicks. */
+:where(a, button, input, select, textarea, summary, [role="button"], [role="checkbox"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--primary-light) !important;
+  outline-offset: 2px;
+}
+.dark-mode :where(a, button, input, select, textarea, summary, [role="button"], [role="checkbox"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline-color: var(--success) !important;
+}

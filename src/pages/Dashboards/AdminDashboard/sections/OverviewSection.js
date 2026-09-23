@@ -13,9 +13,10 @@ import {
   GitBranch,
 } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
+import { notificationsFor, isNotificationRead } from '../../../../utils/notifications';
 import './OverviewSection.css';
 
-export default function OverviewSection({ onJump }) {
+export default function OverviewSection({ onJump, user }) {
   const { users, employers, courses, projects, internships, notifications, ciLinkRequests } = useAppData();
   const totalUsers = users.length;
   const totalProjects = projects.length;
@@ -28,9 +29,8 @@ export default function OverviewSection({ onJump }) {
   const pendingAppeals = projects.filter(p => p.flagged && p.appeal).length;
   const pendingCiRequests = ciLinkRequests.filter(r => r.status === 'pending').length;
 
-  const adminNotifications = notifications.filter(
-    n => n.role === 'admin' || n.role === 'multi'
-  );
+  const adminNotifications = notificationsFor(notifications, user)
+    .map(n => ({ ...n, read: isNotificationRead(n, user) }));
   const recentNotifications = [...adminNotifications].slice(0, 5);
 
   const stats = [

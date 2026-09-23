@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Link, FileText, Edit2, X, Plus, Check } from 'lucide-react';
 import PrimaryNav from '../../components/PrimaryNav/PrimaryNav.js';
 import { useAppData } from '../../data/useAppData.js';
+import Dialog from '../../components/Dialog/Dialog';
 import './portfolio.css';
 
 export default function Portfolio({ user, onNavigate, inline = false, onBack }) {
@@ -22,10 +23,8 @@ export default function Portfolio({ user, onNavigate, inline = false, onBack }) 
   });
   const [newSkill, setNewSkill] = useState('');
 
-  if (!user) {
-    window.location.href = '/login';
-    return null;
-  }
+  // Unauthenticated users are redirected by the route guards in App.js.
+  if (!user) return null;
 
   // ── Find or scaffold this user's portfolio ──────────────────────────────
   const initials = (user.name || '').split(' ').map(n => n[0]).join('').toUpperCase();
@@ -357,7 +356,7 @@ export default function Portfolio({ user, onNavigate, inline = false, onBack }) 
       {/* ── Edit Profile Modal ─────────────────────────────────────────── */}
       {showEdit && (
         <div className="pf-modal-overlay" onClick={() => setShowEdit(false)}>
-          <div className="pf-modal" onClick={e => e.stopPropagation()}>
+          <Dialog className="pf-modal" onClose={() => setShowEdit(false)}>
             <div className="pf-modal-header">
               <h2>Edit profile</h2>
               <button className="pf-modal-close" onClick={() => setShowEdit(false)}>
@@ -455,7 +454,7 @@ export default function Portfolio({ user, onNavigate, inline = false, onBack }) 
                 <Check size={15} /> Save changes
               </button>
             </div>
-          </div>
+          </Dialog>
         </div>
       )}
 

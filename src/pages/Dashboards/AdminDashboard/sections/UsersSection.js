@@ -3,6 +3,7 @@ import { Search, Plus, Edit3, Eye, X, UserPlus } from 'lucide-react';
 import { useAppData } from '../../../../data/useAppData.js';
 import { useToast } from '../../../../components/Toast/Toast.js';
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal.js';
+import Dialog from '../../../../components/Dialog/Dialog';
 import './UsersSection.css';
 
 const TABS = ['All', 'Students', 'Instructors', 'Employers', 'Admins'];
@@ -274,7 +275,7 @@ function CreateAdminModal({ onClose, onSubmit }) {
 
   return (
     <div className="us-modal-backdrop" onClick={onClose}>
-      <div className="us-modal" onClick={(e) => e.stopPropagation()}>
+      <Dialog className="us-modal" onClose={onClose}>
         <header className="us-modal-header">
           <h3>Create admin</h3>
           <button type="button" onClick={onClose} aria-label="Close" className="us-modal-close">
@@ -315,7 +316,7 @@ function CreateAdminModal({ onClose, onSubmit }) {
             </button>
           </div>
         </form>
-      </div>
+      </Dialog>
     </div>
   );
 }
@@ -340,7 +341,7 @@ function EditUserModal({ user, onClose, onSubmit }) {
 
   return (
     <div className="us-modal-backdrop" onClick={onClose}>
-      <div className="us-modal" onClick={(e) => e.stopPropagation()}>
+      <Dialog className="us-modal" onClose={onClose}>
         <header className="us-modal-header">
           <h3>Edit user</h3>
           <button type="button" onClick={onClose} aria-label="Close" className="us-modal-close">
@@ -382,7 +383,7 @@ function EditUserModal({ user, onClose, onSubmit }) {
             <button type="submit" className="us-btn-submit">Save changes</button>
           </div>
         </form>
-      </div>
+      </Dialog>
     </div>
   );
 }
@@ -390,7 +391,7 @@ function EditUserModal({ user, onClose, onSubmit }) {
 function ViewUserModal({ user, onClose, onEdit }) {
   return (
     <div className="us-modal-backdrop" onClick={onClose}>
-      <div className="us-modal" onClick={(e) => e.stopPropagation()}>
+      <Dialog className="us-modal" onClose={onClose}>
         <header className="us-modal-header">
           <h3>User details</h3>
           <button type="button" onClick={onClose} aria-label="Close" className="us-modal-close">
@@ -429,7 +430,7 @@ function ViewUserModal({ user, onClose, onEdit }) {
             <Edit3 size={14} /> Edit
           </button>
         </div>
-      </div>
+      </Dialog>
     </div>
   );
 }
